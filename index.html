@@ -155,7 +155,7 @@
         const randomPrinciple = principles[Math.floor(Math.random() * principles.length)];
         
         // Sets the Top Left logo area to: 🎯 Principle × Name
-        document.getElementById('main-logo').innerHTML = `{randomPrinciple} × <span style="color:var(--amz)">${state.owner}</span>`;
+        document.getElementById('main-logo').innerHTML = `${randomPrinciple} × <span style="color:var(--amz)">${state.owner}</span>`;
         
         const tabs = document.getElementById('day-tabs'); tabs.innerHTML = '';
         ['Mon','Tue','Wed','Thu','Fri','Weekly Scope'].forEach(d => {
@@ -273,4 +273,5 @@
 </script>
 </body>
 </html>
+
 
