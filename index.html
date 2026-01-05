@@ -83,6 +83,11 @@
             <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">SHIFT</label><input type="number" min="0" onkeydown="return isPos(event)" id="s-in" value="8" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
             <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">NPH</label><input type="number" min="0" onkeydown="return isPos(event)" id="n-in" value="0" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
         </div>
+        <div style="margin-top:10px; background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;">
+            <label style="font-size:9px; font-weight:800; color:var(--amz);">RAMP MULTIPLIER</label>
+            <input type="number" min="0" onkeydown="return isPos(event)" id="ramp-val-day" value="1" step="0.1" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);">
+        </div>
+        
         <button class="btn-mini" onclick="clearDay()" style="width:100%; margin-top:10px;">RESET DAY</button>
     </div>
 </main>
@@ -99,10 +104,6 @@
                 <div id="week-prod-out" class="prod-val">0%</div>
                 <span id="week-caption-out" style="font-weight:800; font-size:12px; margin-top:15px; display:block;">WEEKLY AGGREGATE</span>
             </div>
-            <div style="margin-top:15px; background:var(--card); padding:15px; border-radius:20px; border:1px solid var(--border); text-align:center;">
-                <label style="font-size:10px; font-weight:800; color:var(--amz);">RAMP MULTIPLIER (e.g. 1.2)</label>
-                <input type="number" min="0" onkeydown="return isPos(event)" id="ramp-val" value="1" step="0.1" oninput="renderSummary()" style="width:100%; border:none; font-size:24px; font-weight:900; text-align:center; outline:none; background:transparent; color:var(--text);">
-            </div>
             <button class="btn-mini" onclick="resetAll()" style="width:100%; margin-top:15px; padding:10px;">PURGE ALL DATA</button>
             <br><br>
             <button onclick="downloadTextReport()" style="background:transparent; color:#007185; border:1px solid #007185; padding:10px; border-radius:12px; cursor:pointer; width:100%; font-weight:bold; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; transition:0.3s;">Download Weekly Report</button>
@@ -111,6 +112,7 @@
 </div>
 
 <script>
+    /* ADMIN: EDIT PROCESSES HERE */
     const CONFIG = {
         audits: { "LE Validation": { "BV":80, "Invalid":61, "Valid":78, "Plausible":148 }, "Barcode Audit": { "Audits":310 }, "BLMA Audit": { "Audits":2400 }, "3P Clean up": { "Bulk":2613, "BI Unsup":1500, "BI Normal":1200, "Addl Brands":100, "Bulk GTIN":3213, "3p Tickets":1919 }, "Anchor Appeals": { "Out Scope":209, "Inconsistent":372, "Inscope":510, "IKS Update":627, "Addl Curation":58 }, "RCA Audit": { "Audit":600 }, "FCR Audit": { "Valid Conf":10, "False Conf":52 }, "ASIN Probate": { "Proof Val":570.62, "Ex Granted":570.62 }, "KPEX": { "Tickets":812 }, "KPEX Bulk TT": { "Tickets":2063 }, "UPCX Tickets": { "Audits":424 }, "GTIN Tickets": { "Approval":146, "RP":21, "Count":560 } },
         verif: { "Brand Curation": { "V-BV":46 }, "BLMA Verif": { "V-BLMA":46 }, "GTIN Verif": { "Approval":146, "RP":21, "Count":560 }, "Anchor Appeal": { "V-Out Scope":328 }, "3p Clean up": { "V-3p":1919 }, "Barcode Verif": { "V-Barcode":328 }, "UPCX Access": { "V-UPCX":180 }, "CRB Verif": { "V-CRB":46 }, "ASIN Probate Verif": { "V-Probate":328 }, "KPEX Verif": { "V-KPEX":328 } }
@@ -130,14 +132,14 @@
         osc.start(); osc.stop(ctx.currentTime + 0.5);
     }
 
-    let state = JSON.parse(localStorage.getItem('ops_vFinal_v4')) || { owner: '', day: 'Mon', darkMode: false, lastProd: 0, active: { Mon:[], Tue:[], Wed:[], Thu:[], Fri:[] }, data: { Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{} }, hours: { Mon:{s:8, n:0}, Tue:{s:8, n:0}, Wed:{s:8, n:0}, Thu:{s:8, n:0}, Fri:{s:8, n:0} } };
+    /* UPDATED: State now tracks a ramp for each day */
+    let state = JSON.parse(localStorage.getItem('ops_vFinal_v4')) || { owner: '', day: 'Mon', darkMode: false, lastProd: 0, active: { Mon:[], Tue:[], Wed:[], Thu:[], Fri:[] }, data: { Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{} }, hours: { Mon:{s:8, n:0, r:1}, Tue:{s:8, n:0, r:1}, Wed:{s:8, n:0, r:1}, Thu:{s:8, n:0, r:1}, Fri:{s:8, n:0, r:1} } };
 
     function toggleDark() { playSound('pop'); state.darkMode = !state.darkMode; applyTheme(); save(); }
     function applyTheme() { document.body.classList.toggle('dark-mode', state.darkMode); }
     function setName() { const n = document.getElementById('user-name-in').value.trim(); if(n) { state.owner = n.charAt(0).toUpperCase() + n.slice(1).toLowerCase(); init(); showCrazyPop(); } }
     function showCrazyPop() { playSound('success'); const p = document.getElementById('crazy-pop'); document.getElementById('pop-title').innerText = `HELLO, ${state.owner.toUpperCase()}!`; p.style.display = 'flex'; setTimeout(() => p.style.display = 'none', 3000); }
 
-    /* --- START PASTE HERE --- */
     const principles = [
         "Customer Obsession", "Ownership", "Invent and Simplify", 
         "Are Right, A Lot", "Learn and Be Curious", "Hire and Develop the Best", 
@@ -150,11 +152,7 @@
         if(!state.owner) return;
         document.getElementById('name-gate').classList.add('hidden');
         applyTheme(); 
-
-        // Randomly selects a principle every time the page loads
         const randomPrinciple = principles[Math.floor(Math.random() * principles.length)];
-        
-        // Sets the Top Left logo area to: 🎯 Principle × Name
         document.getElementById('main-logo').innerHTML = `${randomPrinciple} × <span style="color:var(--amz)">${state.owner}</span>`;
         
         const tabs = document.getElementById('day-tabs'); tabs.innerHTML = '';
@@ -173,7 +171,9 @@
         document.getElementById('summary-ui').classList.toggle('hidden', !isWeekly);
         if(isWeekly) { document.getElementById('summary-title').innerText = `${state.owner}'s Performance Universe`; renderSummary(); }
         else {
-            document.getElementById('s-in').value = state.hours[state.day].s; document.getElementById('n-in').value = state.hours[state.day].n;
+            document.getElementById('s-in').value = state.hours[state.day].s; 
+            document.getElementById('n-in').value = state.hours[state.day].n;
+            document.getElementById('ramp-val-day').value = state.hours[state.day].r || 1;
             renderChips('audits', 'audit-chips', 'a-active'); renderChips('verif', 'verif-chips', 'v-active');
             renderCards(); calculate();
         }
@@ -199,10 +199,12 @@
         });
     }
 
+    /* UPDATED: Calculation now uses daily ramp */
     function calculate() {
         let earned = 0; const h = state.hours[state.day]; const eff = (h.s - h.n);
+        const ramp = parseFloat(h.r) || 1;
         state.active[state.day].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => earned += (state.data[state.day][k+'_'+t] || 0) * a); });
-        const prod = eff > 0 ? Math.round(((earned/3600)/eff)*100) : 0;
+        const prod = eff > 0 ? Math.round((((earned * ramp)/3600)/eff)*100) : 0;
         if(prod >= 100 && state.lastProd < 100) playSound('success');
         state.lastProd = prod; updateUI(prod, 'prod-out', 'caption-out', 'prod-emoji', 'magic-box');
     }
@@ -218,13 +220,17 @@
         if(prod >= 100) { box.style.borderColor = '#FF9900'; confetti({particleCount:40, spread:50}); } else { box.style.borderColor = 'var(--border)'; }
     }
 
+    /* UPDATED: Summary now aggregates using each day's specific ramp */
     function renderSummary() {
-        const body = document.getElementById('sum-body'); const ramp = parseFloat(document.getElementById('ramp-val').value) || 1;
+        const body = document.getElementById('sum-body');
         document.getElementById('st-head').innerHTML = `<tr><th>PROCESS DETAIL</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th style="color:var(--amz)">TOT</th></tr>`;
         body.innerHTML = ''; const tasks = new Set(); let wE = 0, wEff = 0;
         ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
-            state.active[d].forEach(k => tasks.add(k)); wEff += Math.max(0, (state.hours[d].s - state.hours[d].n));
-            state.active[d].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => wE += (state.data[d][k+'_'+t] || 0) * a); });
+            state.active[d].forEach(k => tasks.add(k)); 
+            const dayEff = Math.max(0, (state.hours[d].s - state.hours[d].n));
+            const dayRamp = parseFloat(state.hours[d].r) || 1;
+            wEff += dayEff;
+            state.active[d].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => wE += (state.data[d][k+'_'+t] || 0) * a * dayRamp); });
         });
         tasks.forEach(k => {
             Object.keys(CONFIG.audits[k] || CONFIG.verif[k]).forEach(t => {
@@ -233,11 +239,19 @@
                 if(tot > 0) body.innerHTML += r + `<td style="font-weight:900;color:var(--amz);text-align:center;">${tot}</td></tr>`;
             });
         });
-        const wProd = wEff > 0 ? Math.round((((wE * ramp)/3600)/wEff)*100) : 0;
+        const wProd = wEff > 0 ? Math.round(((wE/3600)/wEff)*100) : 0;
         updateUI(wProd, 'week-prod-out', 'week-caption-out', 'week-emoji', 'week-magic-box');
     }
 
-    function updateBase() { playSound('tick'); state.hours[state.day].s = document.getElementById('s-in').value; state.hours[state.day].n = document.getElementById('n-in').value; calculate(); }
+    /* UPDATED: Base update now saves the daily ramp value */
+    function updateBase() { 
+        playSound('tick'); 
+        state.hours[state.day].s = document.getElementById('s-in').value; 
+        state.hours[state.day].n = document.getElementById('n-in').value; 
+        state.hours[state.day].r = document.getElementById('ramp-val-day').value;
+        calculate(); 
+    }
+    
     function clearDay() { if(confirm("Reset today?")) { state.data[state.day] = {}; state.active[state.day] = []; render(); } }
     function resetAll() { if(confirm("WIPE EVERYTHING?")) { localStorage.clear(); location.reload(); } }
     function save() { localStorage.setItem('ops_vFinal_v4', JSON.stringify(state)); }
@@ -249,21 +263,36 @@
         txt += `   WEEKLY REPORT: ${s.owner.toUpperCase()}\n==========================================\n\n`;
         let gE = 0, gEff = 0;
         ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
-            let dE = 0; const eff = s.hours[d].s - s.hours[d].n;
-            txt += `--- ${d.toUpperCase()} (Hours: ${eff}) ---\n`;
+            let dE = 0; 
+            const shift = parseFloat(s.hours[d].s) || 0;
+            const nph = parseFloat(s.hours[d].n) || 0;
+            const eff = shift - nph;
+            const rmp = parseFloat(s.hours[d].r) || 1;
+
+            txt += `--- ${d.toUpperCase()} ---\n`;
+            txt += `Shift: ${shift}h | NPH: ${nph}h | Net: ${eff}h | Ramp: ${rmp}\n`;
+            txt += `------------------------------------------\n`;
+            
             s.active[d].forEach(k => {
                 Object.entries(CONFIG.audits[k] || CONFIG.verif[k]).forEach(([t, a]) => {
                     const v = parseInt(s.data[d][k+'_'+t]) || 0;
-                    if(v > 0) { txt += `${k} (${t}): ${v}\n`; dE += (v * a); }
+                    if(v > 0) { 
+                        txt += `${k} - ${t}: ${v}\n`; 
+                        dE += (v * a * rmp); 
+                    }
                 });
             });
-            txt += `Daily Prod: ${eff > 0 ? Math.round(((dE/3600)/eff)*100) : 0}%\n\n`;
+            const dProd = eff > 0 ? Math.round(((dE/3600)/eff)*100) : 0;
+            txt += `DAILY PROD: ${dProd}%\n\n`;
             gE += dE; gEff += Math.max(0, eff);
         });
-        txt += `==========================================\nWEEKLY SCORE: ${gEff > 0 ? Math.round(((gE/3600)/gEff)*100) : 0}%\n==========================================`;
+        const wProd = gEff > 0 ? Math.round(((gE/3600)/gEff)*100) : 0;
+        txt += `==========================================\n`;
+        txt += `WEEKLY SCORE: ${wProd}%\n`;
+        txt += `==========================================`;
         const blob = new Blob([txt], { type: 'text/plain' });
         const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-        link.download = `${s.owner}_Report.txt`; link.click();
+        link.download = `${s.owner}_Performance_Report.txt`; link.click();
     }
 
     window.onload = () => { 
@@ -273,6 +302,3 @@
 </script>
 </body>
 </html>
-
-
-
