@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-22V0EVLKTC"></script>
+   <script async src="https://www.googletagmanager.com/gtag/js?id=G-22V0EVLKTC"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-22V0EVLKTC');
 </script>
     <meta charset="UTF-8">
@@ -21,6 +19,19 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; transition: background 0.3s; }
         header { background: #1E293B; color: white; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--amz); z-index: 100; position: relative; }
         .logo b { color: var(--amz); text-transform: capitalize; }
+        
+        /* NEW: CRAZY TOAST STYLING */
+        #update-toast { 
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
+            background: var(--amz); color: white; padding: 12px 25px; 
+            border-radius: 50px; font-weight: 800; font-size: 13px; z-index: 50000;
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(255,153,0,0.3);
+            transition: top 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        #update-toast.show { top: 20px; }
+        .toast-emoji { font-size: 20px; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
         #crazy-pop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); z-index: 20000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .pop-content { background: var(--card); padding: 40px; border-radius: 40px; text-align: center; border: 3px solid var(--amz); }
         .tabs { display: flex; gap: 5px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 10px; }
@@ -49,6 +60,11 @@
     </style>
 </head>
 <body>
+
+<div id="update-toast">
+    <span class="toast-emoji">😎</span>
+    <span id="toast-msg"></span>
+</div>
 
 <div id="crazy-pop" onclick="this.style.display='none'">
     <div class="pop-content">
@@ -89,8 +105,8 @@
             <span id="caption-out" style="font-weight:800; font-size:11px; margin-top:10px; display:block;">READY</span>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-            <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">SHIFT</label><input type="number" min="0" onkeydown="return isPos(event)" id="s-in" value="8" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
-            <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">NPH</label><input type="number" min="0" onkeydown="return isPos(event)" id="n-in" value="0" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
+            <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">SHIFT (HRS)</label><input type="number" min="0" onkeydown="return isPos(event)" id="s-in" value="8" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
+            <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">NPH (MINS)</label><input type="number" min="0" onkeydown="return isPos(event)" id="n-in" value="0" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
         </div>
         <div style="margin-top:10px; background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;">
             <label style="font-size:9px; font-weight:800; color:var(--amz);">RAMP MULTIPLIER</label>
@@ -141,7 +157,6 @@
         osc.start(); osc.stop(ctx.currentTime + 0.5);
     }
 
-    /* UPDATED: State now tracks a ramp for each day */
     let state = JSON.parse(localStorage.getItem('ops_vFinal_v4')) || { owner: '', day: 'Mon', darkMode: false, lastProd: 0, active: { Mon:[], Tue:[], Wed:[], Thu:[], Fri:[] }, data: { Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{} }, hours: { Mon:{s:8, n:0, r:1}, Tue:{s:8, n:0, r:1}, Wed:{s:8, n:0, r:1}, Thu:{s:8, n:0, r:1}, Fri:{s:8, n:0, r:1} } };
 
     function toggleDark() { playSound('pop'); state.darkMode = !state.darkMode; applyTheme(); save(); }
@@ -170,6 +185,17 @@
             b.onclick = () => { playSound('pop'); state.day = d; init(); }; tabs.appendChild(b);
         });
         render();
+    }
+
+    // NEW: CRAZY TOAST FUNCTION
+    function triggerToast() {
+        const expiry = new Date('2026-01-09T22:00:00').getTime();
+        if (Date.now() < expiry) {
+            const toast = document.getElementById('update-toast');
+            document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}, NPH Is Now In Minutes!`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 5000);
+        }
     }
 
     function render() {
@@ -208,9 +234,9 @@
         });
     }
 
-    /* UPDATED: Calculation now uses daily ramp */
     function calculate() {
-        let earned = 0; const h = state.hours[state.day]; const eff = (h.s - h.n);
+        let earned = 0; const h = state.hours[state.day]; 
+        const eff = (h.s - (h.n / 60)); 
         const ramp = parseFloat(h.r) || 1;
         state.active[state.day].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => earned += (state.data[state.day][k+'_'+t] || 0) * a); });
         const prod = eff > 0 ? Math.round((((earned * ramp)/3600)/eff)*100) : 0;
@@ -221,7 +247,8 @@
     function updateUI(prod, outId, capId, emoId, boxId) {
         const out = document.getElementById(outId); const cap = document.getElementById(capId);
         const emo = document.getElementById(emoId); const box = document.getElementById(boxId);
-        out.innerText = prod + '%';
+        const displayProd = Math.min(prod, 1000);
+        out.innerText = displayProd + '%';
         const tiers = [{l:100,m:"GOD MODE!",e:"🚀"},{l:70,m:"High Velocity",e:"🔥"},{l:40,m:"Solid",e:"💪"},{l:0,m:"Ready",e:"🔋"}];
         const t = tiers.find(x => prod >= x.l);
         out.style.color = prod >= 100 ? '#FF9900' : 'var(--text)';
@@ -229,14 +256,13 @@
         if(prod >= 100) { box.style.borderColor = '#FF9900'; confetti({particleCount:40, spread:50}); } else { box.style.borderColor = 'var(--border)'; }
     }
 
-    /* UPDATED: Summary now aggregates using each day's specific ramp */
     function renderSummary() {
         const body = document.getElementById('sum-body');
         document.getElementById('st-head').innerHTML = `<tr><th>PROCESS DETAIL</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th style="color:var(--amz)">TOT</th></tr>`;
         body.innerHTML = ''; const tasks = new Set(); let wE = 0, wEff = 0;
         ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
             state.active[d].forEach(k => tasks.add(k)); 
-            const dayEff = Math.max(0, (state.hours[d].s - state.hours[d].n));
+            const dayEff = Math.max(0, (state.hours[d].s - (state.hours[d].n / 60)));
             const dayRamp = parseFloat(state.hours[d].r) || 1;
             wEff += dayEff;
             state.active[d].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => wE += (state.data[d][k+'_'+t] || 0) * a * dayRamp); });
@@ -252,13 +278,17 @@
         updateUI(wProd, 'week-prod-out', 'week-caption-out', 'week-emoji', 'week-magic-box');
     }
 
-    /* UPDATED: Base update now saves the daily ramp value */
     function updateBase() { 
         playSound('tick'); 
+        playSound('tick'); 
+        
+        let nInput = document.getElementById('n-in');
+        if (nInput.value > 480) nInput.value = 480; // Limit NPH to 480 mins (8hrs)
+
         state.hours[state.day].s = document.getElementById('s-in').value; 
-        state.hours[state.day].n = document.getElementById('n-in').value; 
+        state.hours[state.day].n = nInput.value; 
         state.hours[state.day].r = document.getElementById('ramp-val-day').value;
-        calculate(); 
+        calculate();
     }
     
     function clearDay() { if(confirm("Reset today?")) { state.data[state.day] = {}; state.active[state.day] = []; render(); } }
@@ -274,12 +304,12 @@
         ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
             let dE = 0; 
             const shift = parseFloat(s.hours[d].s) || 0;
-            const nph = parseFloat(s.hours[d].n) || 0;
-            const eff = shift - nph;
+            const nphMins = parseFloat(s.hours[d].n) || 0;
+            const eff = shift - (nphMins / 60);
             const rmp = parseFloat(s.hours[d].r) || 1;
 
             txt += `--- ${d.toUpperCase()} ---\n`;
-            txt += `Shift: ${shift}h | NPH: ${nph}h | Net: ${eff}h | Ramp: ${rmp}\n`;
+            txt += `Shift: ${shift}h | NPH: ${nphMins}m | Net: ${eff.toFixed(2)}h | Ramp: ${rmp}\n`;
             txt += `------------------------------------------\n`;
             
             s.active[d].forEach(k => {
@@ -304,8 +334,12 @@
         link.download = `${s.owner}_Performance_Report.txt`; link.click();
     }
 
+    // TRIGGERED ONLY ONCE PER RE-OPEN/REFRESH
     window.onload = () => { 
-        if(state.owner) init(); 
+        if(state.owner) {
+            init(); 
+            triggerToast(); // Show the crazy animation here
+        }
         else document.getElementById('user-name-in').focus();
     };
 </script>
