@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <script async src="https://www.googletagmanager.com/gtag/js?id=G-22V0EVLKTC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-22V0EVLKTC');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-22V0EVLKTC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-22V0EVLKTC');
+    </script>
     <meta charset="UTF-8">
     <title>Amazon prod tracker</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
@@ -20,7 +20,6 @@
         header { background: #1E293B; color: white; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--amz); z-index: 100; position: relative; }
         .logo b { color: var(--amz); text-transform: capitalize; }
         
-        /* NEW: CRAZY TOAST STYLING */
         #update-toast { 
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
             background: var(--amz); color: white; padding: 12px 25px; 
@@ -62,7 +61,7 @@
 <body>
 
 <div id="update-toast">
-    <span class="toast-emoji">😎</span>
+    <span class="toast-emoji">🚀</span>
     <span id="toast-msg"></span>
 </div>
 
@@ -88,6 +87,7 @@
     <div style="display:flex; align-items:center; gap:20px;">
         <div class="tabs" id="day-tabs"></div>
         <div id="dark-toggle" onclick="toggleDark()" style="cursor:pointer; font-size:20px;">🌓</div>
+        <div onclick="showCredits(event)" title="Author Info" style="cursor:pointer; font-size:14px; opacity:0.4; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); margin-left:10px; color:white;">ⓘ</div>
     </div>
 </header>
 
@@ -106,7 +106,7 @@
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
             <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">SHIFT (HRS)</label><input type="number" min="0" onkeydown="return isPos(event)" id="s-in" value="8" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
-            <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">NPH (MINS)</label><input type="number" min="0" onkeydown="return isPos(event)" id="n-in" value="0" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
+            <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">NPH (MINS)</label><input type="number" min="0" max="480" onkeydown="return isPos(event)" id="n-in" value="0" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
         </div>
         <div style="margin-top:10px; background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;">
             <label style="font-size:9px; font-weight:800; color:var(--amz);">RAMP MULTIPLIER</label>
@@ -137,211 +137,241 @@
 </div>
 
 <script>
-    /* ADMIN: EDIT PROCESSES HERE */
-    const CONFIG = {
-        audits: { "LE Validation": { "BV":80, "Invalid":61, "Valid":78, "Plausible":148 }, "Barcode Audit": { "Audits":310 }, "BLMA Audit": { "Audits":2400 }, "3P Clean up": { "Bulk":2613, "BI Unsup":1500, "BI Normal":1200, "Addl Brands":100, "Bulk GTIN":3213, "3p Tickets":1919 }, "Anchor Appeals": { "Out Scope":209, "Inconsistent":372, "Inscope":510, "IKS Update":627, "Addl Curation":58 }, "RCA Audit": { "Audit":600 }, "FCR Audit": { "Valid Conf":10, "False Conf":52 }, "ASIN Probate": { "Proof Val":570.62, "Ex Granted":570.62 }, "KPEX": { "Tickets":812 }, "KPEX Bulk TT": { "Tickets":2063 }, "UPCX Tickets": { "Audits":424 }, "GTIN Tickets": { "Approval":146, "RP":21, "Count":560 } },
-        verif: { "Brand Curation": { "V-BV":46 }, "BLMA Verif": { "V-BLMA":46 }, "GTIN Verif": { "Approval":146, "RP":21, "Count":560 }, "Anchor Appeal": { "V-Out Scope":328 }, "3p Clean up": { "V-3p":1919 }, "Barcode Verif": { "V-Barcode":328 }, "UPCX Access": { "V-UPCX":180 }, "CRB Verif": { "V-CRB":46 }, "ASIN Probate Verif": { "V-Probate":328 }, "KPEX Verif": { "V-KPEX":328 } }
-    };
-
-    function isPos(e) { if(['-','e','+'].includes(e.key)) e.preventDefault(); }
-
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    const ctx = new AudioCtx();
-    function playSound(type) {
-        if(ctx.state === 'suspended') ctx.resume();
-        const osc = ctx.createOscillator(); const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        if(type === 'pop') { osc.frequency.setValueAtTime(600, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1); }
-        else if(type === 'success') { osc.type = 'triangle'; osc.frequency.setValueAtTime(400, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.5); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5); }
-        else if(type === 'tick') { osc.type = 'square'; osc.frequency.setValueAtTime(150, ctx.currentTime); gain.gain.setValueAtTime(0.05, ctx.currentTime); gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.05); }
-        osc.start(); osc.stop(ctx.currentTime + 0.5);
+const CONFIG = {
+    audits: {
+        "LE Validation": { "BV": 80, "Invalid": 61, "Valid": 78, "Plausible": 148 },
+        "Barcode Audit": { "Audits": 310 },
+        "BLMA Audit": { "Audits": 2400 },
+        "3P Clean up": { "Bulk": 2613, "BI Unsup": 1500, "BI Normal": 1200, "Addl Brands": 100, "Bulk GTIN": 3213, "3p Tickets": 1919 },
+        "Anchor Appeals": { "Out Scope": 209, "Inconsistent": 372, "Inscope": 510, "IKS Update": 627, "Addl Curation": 58 },
+        "RCA Audit": { "Audit": 600 },
+        "FCR Audit": { "Valid Conf": 10, "False Conf": 52 },
+        "ASIN Probate": { "Proof Val": 570.62, "Ex Granted": 570.62 },
+        "KPEX": { "Tickets": 812 },
+        "KPEX Bulk TT": { "Tickets": 2063 },
+        "UPCX Tickets": { "Audits": 424 },
+        "GTIN Tickets": { "Approval": 146, "RP": 21, "Count": 560 },
+        "SIM Appeals audits": { "Audits": 669.5 }
+    },
+    verif: {
+        "Brand Curation": { "V-BV": 46 },
+        "BLMA Verif": { "V-BLMA": 46 },
+        "GTIN Verif": { "Approval": 146, "RP": 21, "Count": 560 },
+        "Anchor Appeal": { "V-Out Scope": 328 },
+        "3p Clean up": { "V-3p": 1919 },
+        "Barcode Verif": { "V-Barcode": 328 },
+        "UPCX Access": { "V-UPCX": 180 },
+        "CRB Verif": { "V-CRB": 46 },
+        "ASIN Probate Verif": { "V-Probate": 328 },
+        "KPEX Verif": { "V-KPEX": 328 },
+        "SIM Appeals verif": { "verif": 669.5 }
     }
+};
 
-    let state = JSON.parse(localStorage.getItem('ops_vFinal_v4')) || { owner: '', day: 'Mon', darkMode: false, lastProd: 0, active: { Mon:[], Tue:[], Wed:[], Thu:[], Fri:[] }, data: { Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{} }, hours: { Mon:{s:8, n:0, r:1}, Tue:{s:8, n:0, r:1}, Wed:{s:8, n:0, r:1}, Thu:{s:8, n:0, r:1}, Fri:{s:8, n:0, r:1} } };
+function isPos(e) { if (['-', 'e', '+'].includes(e.key)) e.preventDefault(); }
 
-    function toggleDark() { playSound('pop'); state.darkMode = !state.darkMode; applyTheme(); save(); }
-    function applyTheme() { document.body.classList.toggle('dark-mode', state.darkMode); }
-    function setName() { const n = document.getElementById('user-name-in').value.trim(); if(n) { state.owner = n.charAt(0).toUpperCase() + n.slice(1).toLowerCase(); init(); showCrazyPop(); } }
-    function showCrazyPop() { playSound('success'); const p = document.getElementById('crazy-pop'); document.getElementById('pop-title').innerText = `HELLO, ${state.owner.toUpperCase()}!`; p.style.display = 'flex'; setTimeout(() => p.style.display = 'none', 3000); }
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const ctx = new AudioCtx();
+function playSound(type) {
+    if(ctx.state === 'suspended') ctx.resume();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    if(type === 'pop') { osc.frequency.setValueAtTime(600, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1); }
+    else if(type === 'success') { osc.type = 'triangle'; osc.frequency.setValueAtTime(400, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.5); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5); }
+    else if(type === 'tick') { osc.type = 'square'; osc.frequency.setValueAtTime(150, ctx.currentTime); gain.gain.setValueAtTime(0.05, ctx.currentTime); gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.05); }
+    osc.start(); osc.stop(ctx.currentTime + 0.5);
+}
 
-    const principles = [
-        "Customer Obsession", "Ownership", "Invent and Simplify", 
-        "Are Right, A Lot", "Learn and Be Curious", "Hire and Develop the Best", 
-        "Insist on the Highest Standards", "Think Big", "Bias for Action", 
-        "Frugality", "Earn Trust", "Dive Deep", "Have Backbone; Disagree and Commit", 
-        "Deliver Results", "Strive to be Earth’s Best Employer", "Success and Scale Bring Broad Responsibility"
-    ];
+let state = JSON.parse(localStorage.getItem('ops_vFinal_v4')) || { owner: '', day: 'Mon', darkMode: false, lastProd: 0, active: { Mon:[], Tue:[], Wed:[], Thu:[], Fri:[] }, data: { Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{} }, hours: { Mon:{s:8, n:0, r:1}, Tue:{s:8, n:0, r:1}, Wed:{s:8, n:0, r:1}, Thu:{s:8, n:0, r:1}, Fri:{s:8, n:0, r:1} } };
 
-    function init() {
-        if(!state.owner) return;
-        document.getElementById('name-gate').classList.add('hidden');
-        applyTheme(); 
-        const randomPrinciple = principles[Math.floor(Math.random() * principles.length)];
-        document.getElementById('main-logo').innerHTML = `${randomPrinciple} × <span style="color:var(--amz)">${state.owner}</span>`;
-        
-        const tabs = document.getElementById('day-tabs'); tabs.innerHTML = '';
-        ['Mon','Tue','Wed','Thu','Fri','Weekly Scope'].forEach(d => {
-            const b = document.createElement('button'); b.className = `tab ${state.day === d ? 'active' : ''}`; b.innerText = d; 
-            b.onclick = () => { playSound('pop'); state.day = d; init(); }; tabs.appendChild(b);
+function toggleDark() { playSound('pop'); state.darkMode = !state.darkMode; applyTheme(); save(); }
+function applyTheme() { document.body.classList.toggle('dark-mode', state.darkMode); }
+function setName() { const n = document.getElementById('user-name-in').value.trim(); if(n) { state.owner = n.charAt(0).toUpperCase() + n.slice(1).toLowerCase(); init(); showCrazyPop(); } }
+function showCrazyPop() { playSound('success'); const p = document.getElementById('crazy-pop'); document.getElementById('pop-title').innerText = `HELLO, ${state.owner.toUpperCase()}!`; p.style.display = 'flex'; setTimeout(() => p.style.display = 'none', 3000); }
+
+function showCredits(e) {
+    if(e) e.stopPropagation(); 
+    const p = document.getElementById('crazy-pop');
+    const title = document.getElementById('pop-title');
+    const subtext = p.querySelector('p:nth-of-type(1)');
+    
+    // Save what was there before
+    const originalTitle = title.innerHTML;
+    const originalSub = subtext.innerHTML;
+
+    // Show your details
+    title.innerHTML = `<span style="font-size:16px; color:var(--slate); font-weight:600;">Developed by</span><br><span style="color:var(--amz)">RAKESH KONAPAKALA</span>`;
+    subtext.innerHTML = `Alias: <b>konapaks</b>`;
+
+    // Force display
+    p.style.display = 'flex';
+    playSound('success');
+
+    // Reset after 4 seconds so the "Welcome" message stays original
+    setTimeout(() => {
+        p.style.display = 'none';
+        // Put the original welcome text back so it's ready for next refresh
+        title.innerHTML = originalTitle;
+        subtext.innerHTML = originalSub;
+    }, 4000);
+}
+
+const principles = ["Customer Obsession", "Ownership", "Invent and Simplify", "Are Right, A Lot", "Learn and Be Curious", "Hire and Develop the Best", "Insist on the Highest Standards", "Think Big", "Bias for Action", "Frugality", "Earn Trust", "Dive Deep", "Have Backbone; Disagree and Commit", "Deliver Results", "Strive to be Earth’s Best Employer", "Success and Scale Bring Broad Responsibility"];
+
+function init() {
+    if(!state.owner) return;
+    document.getElementById('name-gate').classList.add('hidden');
+    applyTheme(); 
+    const randomPrinciple = principles[Math.floor(Math.random() * principles.length)];
+    document.getElementById('main-logo').innerHTML = `${randomPrinciple} × <span style="color:var(--amz)">${state.owner}</span>`;
+    const tabs = document.getElementById('day-tabs'); tabs.innerHTML = '';
+    ['Mon','Tue','Wed','Thu','Fri','Weekly Scope'].forEach(d => {
+        const b = document.createElement('button'); b.className = `tab ${state.day === d ? 'active' : ''}`; b.innerText = d; 
+        b.onclick = () => { playSound('pop'); state.day = d; init(); }; tabs.appendChild(b);
+    });
+    render();
+}
+
+function triggerToast() {
+    const expiry = new Date('2026-01-14T23:59:59').getTime();
+    if (Date.now() < expiry) {
+        const toast = document.getElementById('update-toast');
+        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}, NPH In Minutes & SIM Appeals Added!`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 6000);
+    }
+}
+
+function render() {
+    save();
+    const isWeekly = state.day === 'Weekly Scope';
+    document.getElementById('sel-area').classList.toggle('hidden', isWeekly);
+    document.getElementById('main-ui').classList.toggle('hidden', isWeekly);
+    document.getElementById('summary-ui').classList.toggle('hidden', !isWeekly);
+    if(isWeekly) { document.getElementById('summary-title').innerText = `${state.owner}'s Performance Universe`; renderSummary(); }
+    else {
+        document.getElementById('s-in').value = state.hours[state.day].s; 
+        document.getElementById('n-in').value = state.hours[state.day].n;
+        document.getElementById('ramp-val-day').value = state.hours[state.day].r || 1;
+        renderChips('audits', 'audit-chips', 'a-active'); renderChips('verif', 'verif-chips', 'v-active');
+        renderCards(); calculate();
+    }
+}
+
+function renderChips(cat, target, cls) {
+    const div = document.getElementById(target); div.innerHTML = '';
+    Object.keys(CONFIG[cat]).forEach(k => {
+        const c = document.createElement('div'); c.className = `chip ${state.active[state.day].includes(k) ? cls : ''}`; c.innerText = k;
+        c.onclick = () => { playSound('pop'); let list = state.active[state.day]; state.active[state.day] = list.includes(k) ? list.filter(i => i !== k) : [...list, k]; render(); };
+        div.appendChild(c);
+    });
+}
+
+function renderCards() {
+    const zone = document.getElementById('card-zone'); zone.innerHTML = '';
+    state.active[state.day].forEach(k => {
+        const conf = CONFIG.audits[k] || CONFIG.verif[k];
+        const card = document.createElement('div'); card.className = 'card';
+        card.innerHTML = `<div class="card-h">${k}</div><div style="padding:12px">${Object.entries(conf).map(([t, a]) => `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="font-size:11px;font-weight:700;">${t}</label>
+        <input type="number" min="0" onkeydown="return isPos(event)" value="${state.data[state.day][k+'_'+t] || ''}" oninput="playSound('tick');state.data[state.day]['${k+'_'+t}']=this.value;calculate()" style="width:70px;padding:6px;border-radius:10px;border:1px solid var(--border);text-align:center;font-weight:800;background:var(--bg);color:var(--text);outline:none;"></div>`).join('')}</div>`;
+        zone.appendChild(card);
+    });
+}
+
+function calculate() {
+    let earned = 0; const h = state.hours[state.day]; 
+    const eff = (h.s - (h.n / 60)); 
+    const ramp = parseFloat(h.r) || 1;
+    state.active[state.day].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => earned += (state.data[state.day][k+'_'+t] || 0) * a); });
+    const prod = eff > 0 ? Math.round((((earned * ramp)/3600)/eff)*100) : 0;
+    if(prod >= 100 && state.lastProd < 100) playSound('success');
+    state.lastProd = prod; updateUI(prod, 'prod-out', 'caption-out', 'prod-emoji', 'magic-box');
+}
+
+function updateUI(prod, outId, capId, emoId, boxId) {
+    const out = document.getElementById(outId); const cap = document.getElementById(capId);
+    const emo = document.getElementById(emoId); const box = document.getElementById(boxId);
+    const displayProd = Math.min(prod, 1000);
+    out.innerText = displayProd + '%';
+    const tiers = [{l:100,m:"GOD MODE!",e:"🚀"},{l:70,m:"High Velocity",e:"🔥"},{l:40,m:"Solid",e:"💪"},{l:0,m:"Ready",e:"🔋"}];
+    const t = tiers.find(x => prod >= x.l);
+    out.style.color = prod >= 100 ? '#FF9900' : 'var(--text)';
+    cap.innerText = t.m.toUpperCase(); emo.innerText = t.e;
+    if(prod >= 100) { box.style.borderColor = '#FF9900'; confetti({particleCount:40, spread:50}); } else { box.style.borderColor = 'var(--border)'; }
+}
+
+function renderSummary() {
+    const body = document.getElementById('sum-body');
+    document.getElementById('st-head').innerHTML = `<tr><th>PROCESS DETAIL</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th style="color:var(--amz)">TOT</th></tr>`;
+    body.innerHTML = ''; const tasks = new Set(); let wE = 0, wEff = 0;
+    ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
+        state.active[d].forEach(k => tasks.add(k)); 
+        const dayEff = Math.max(0, (state.hours[d].s - (state.hours[d].n / 60)));
+        const dayRamp = parseFloat(state.hours[d].r) || 1;
+        wEff += dayEff;
+        state.active[d].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => wE += (state.data[d][k+'_'+t] || 0) * a * dayRamp); });
+    });
+    tasks.forEach(k => {
+        Object.keys(CONFIG.audits[k] || CONFIG.verif[k]).forEach(t => {
+            let r = `<tr><td><b style="font-size:12px">${k}</b><br><small style="color:var(--slate)">${t}</small></td>`, tot = 0;
+            ['Mon','Tue','Wed','Thu','Fri'].forEach(d => { let v = parseInt(state.data[d][k+'_'+t])||0; r+=`<td>${v||'-'}</td>`; tot+=v; });
+            if(tot > 0) body.innerHTML += r + `<td style="font-weight:900;color:var(--amz);text-align:center;">${tot}</td></tr>`;
         });
-        render();
-    }
+    });
+    const wProd = wEff > 0 ? Math.round(((wE/3600)/wEff)*100) : 0;
+    updateUI(wProd, 'week-prod-out', 'week-caption-out', 'week-emoji', 'week-magic-box');
+}
 
-    // NEW: CRAZY TOAST FUNCTION
-    function triggerToast() {
-        const expiry = new Date('2026-01-09T22:00:00').getTime();
-        if (Date.now() < expiry) {
-            const toast = document.getElementById('update-toast');
-            document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}, NPH Is Now In Minutes!`;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 5000);
-        }
-    }
+function updateBase() { 
+    playSound('tick'); 
+    let nInput = document.getElementById('n-in');
+    if (nInput.value > 480) nInput.value = 480; 
+    state.hours[state.day].s = document.getElementById('s-in').value; 
+    state.hours[state.day].n = nInput.value; 
+    state.hours[state.day].r = document.getElementById('ramp-val-day').value;
+    calculate();
+}
 
-    function render() {
-        save();
-        const isWeekly = state.day === 'Weekly Scope';
-        document.getElementById('sel-area').classList.toggle('hidden', isWeekly);
-        document.getElementById('main-ui').classList.toggle('hidden', isWeekly);
-        document.getElementById('summary-ui').classList.toggle('hidden', !isWeekly);
-        if(isWeekly) { document.getElementById('summary-title').innerText = `${state.owner}'s Performance Universe`; renderSummary(); }
-        else {
-            document.getElementById('s-in').value = state.hours[state.day].s; 
-            document.getElementById('n-in').value = state.hours[state.day].n;
-            document.getElementById('ramp-val-day').value = state.hours[state.day].r || 1;
-            renderChips('audits', 'audit-chips', 'a-active'); renderChips('verif', 'verif-chips', 'v-active');
-            renderCards(); calculate();
-        }
-    }
+function clearDay() { if(confirm("Reset today?")) { state.data[state.day] = {}; state.active[state.day] = []; render(); } }
+function resetAll() { if(confirm("WIPE EVERYTHING?")) { localStorage.clear(); location.reload(); } }
+function save() { localStorage.setItem('ops_vFinal_v4', JSON.stringify(state)); }
 
-    function renderChips(cat, target, cls) {
-        const div = document.getElementById(target); div.innerHTML = '';
-        Object.keys(CONFIG[cat]).forEach(k => {
-            const c = document.createElement('div'); c.className = `chip ${state.active[state.day].includes(k) ? cls : ''}`; c.innerText = k;
-            c.onclick = () => { playSound('pop'); let list = state.active[state.day]; state.active[state.day] = list.includes(k) ? list.filter(i => i !== k) : [...list, k]; render(); };
-            div.appendChild(c);
-        });
-    }
-
-    function renderCards() {
-        const zone = document.getElementById('card-zone'); zone.innerHTML = '';
-        state.active[state.day].forEach(k => {
-            const conf = CONFIG.audits[k] || CONFIG.verif[k];
-            const card = document.createElement('div'); card.className = 'card';
-            card.innerHTML = `<div class="card-h">${k}</div><div style="padding:12px">${Object.entries(conf).map(([t, a]) => `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="font-size:11px;font-weight:700;">${t}</label>
-            <input type="number" min="0" onkeydown="return isPos(event)" value="${state.data[state.day][k+'_'+t] || ''}" oninput="playSound('tick');state.data[state.day]['${k+'_'+t}']=this.value;calculate()" style="width:70px;padding:6px;border-radius:10px;border:1px solid var(--border);text-align:center;font-weight:800;background:var(--bg);color:var(--text);outline:none;"></div>`).join('')}</div>`;
-            zone.appendChild(card);
-        });
-    }
-
-    function calculate() {
-        let earned = 0; const h = state.hours[state.day]; 
-        const eff = (h.s - (h.n / 60)); 
-        const ramp = parseFloat(h.r) || 1;
-        state.active[state.day].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => earned += (state.data[state.day][k+'_'+t] || 0) * a); });
-        const prod = eff > 0 ? Math.round((((earned * ramp)/3600)/eff)*100) : 0;
-        if(prod >= 100 && state.lastProd < 100) playSound('success');
-        state.lastProd = prod; updateUI(prod, 'prod-out', 'caption-out', 'prod-emoji', 'magic-box');
-    }
-
-    function updateUI(prod, outId, capId, emoId, boxId) {
-        const out = document.getElementById(outId); const cap = document.getElementById(capId);
-        const emo = document.getElementById(emoId); const box = document.getElementById(boxId);
-        const displayProd = Math.min(prod, 1000);
-        out.innerText = displayProd + '%';
-        const tiers = [{l:100,m:"GOD MODE!",e:"🚀"},{l:70,m:"High Velocity",e:"🔥"},{l:40,m:"Solid",e:"💪"},{l:0,m:"Ready",e:"🔋"}];
-        const t = tiers.find(x => prod >= x.l);
-        out.style.color = prod >= 100 ? '#FF9900' : 'var(--text)';
-        cap.innerText = t.m.toUpperCase(); emo.innerText = t.e;
-        if(prod >= 100) { box.style.borderColor = '#FF9900'; confetti({particleCount:40, spread:50}); } else { box.style.borderColor = 'var(--border)'; }
-    }
-
-    function renderSummary() {
-        const body = document.getElementById('sum-body');
-        document.getElementById('st-head').innerHTML = `<tr><th>PROCESS DETAIL</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th style="color:var(--amz)">TOT</th></tr>`;
-        body.innerHTML = ''; const tasks = new Set(); let wE = 0, wEff = 0;
-        ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
-            state.active[d].forEach(k => tasks.add(k)); 
-            const dayEff = Math.max(0, (state.hours[d].s - (state.hours[d].n / 60)));
-            const dayRamp = parseFloat(state.hours[d].r) || 1;
-            wEff += dayEff;
-            state.active[d].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => wE += (state.data[d][k+'_'+t] || 0) * a * dayRamp); });
-        });
-        tasks.forEach(k => {
-            Object.keys(CONFIG.audits[k] || CONFIG.verif[k]).forEach(t => {
-                let r = `<tr><td><b style="font-size:12px">${k}</b><br><small style="color:var(--slate)">${t}</small></td>`, tot = 0;
-                ['Mon','Tue','Wed','Thu','Fri'].forEach(d => { let v = parseInt(state.data[d][k+'_'+t])||0; r+=`<td>${v||'-'}</td>`; tot+=v; });
-                if(tot > 0) body.innerHTML += r + `<td style="font-weight:900;color:var(--amz);text-align:center;">${tot}</td></tr>`;
+function downloadTextReport() {
+    const s = JSON.parse(localStorage.getItem('ops_vFinal_v4'));
+    if (!s || !s.owner) { alert("No data found!"); return; }
+    let txt = "==========================================\n";
+    txt += `   WEEKLY REPORT: ${s.owner.toUpperCase()}\n==========================================\n\n`;
+    let gE = 0, gEff = 0;
+    ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
+        let dE = 0; 
+        const shift = parseFloat(s.hours[d].s) || 0;
+        const nphMins = parseFloat(s.hours[d].n) || 0;
+        const eff = shift - (nphMins / 60);
+        const rmp = parseFloat(s.hours[d].r) || 1;
+        txt += `--- ${d.toUpperCase()} ---\n`;
+        txt += `Shift: ${shift}h | NPH: ${nphMins}m | Net: ${eff.toFixed(2)}h | Ramp: ${rmp}\n`;
+        txt += `------------------------------------------\n`;
+        s.active[d].forEach(k => {
+            Object.entries(CONFIG.audits[k] || CONFIG.verif[k]).forEach(([t, a]) => {
+                const v = parseInt(s.data[d][k+'_'+t]) || 0;
+                if(v > 0) { txt += `${k} - ${t}: ${v}\n`; dE += (v * a * rmp); }
             });
         });
-        const wProd = wEff > 0 ? Math.round(((wE/3600)/wEff)*100) : 0;
-        updateUI(wProd, 'week-prod-out', 'week-caption-out', 'week-emoji', 'week-magic-box');
-    }
+        const dProd = eff > 0 ? Math.round(((dE/3600)/eff)*100) : 0;
+        txt += `DAILY PROD: ${dProd}%\n\n`;
+        gE += dE; gEff += Math.max(0, eff);
+    });
+    const wProd = gEff > 0 ? Math.round(((gE/3600)/gEff)*100) : 0;
+    txt += `==========================================\nWEEKLY SCORE: ${wProd}%\n==========================================`;
+    const blob = new Blob([txt], { type: 'text/plain' });
+    const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+    link.download = `${s.owner}_Performance_Report.txt`; link.click();
+}
 
-    function updateBase() { 
-        playSound('tick'); 
-        playSound('tick'); 
-        
-        let nInput = document.getElementById('n-in');
-        if (nInput.value > 480) nInput.value = 480; // Limit NPH to 480 mins (8hrs)
-
-        state.hours[state.day].s = document.getElementById('s-in').value; 
-        state.hours[state.day].n = nInput.value; 
-        state.hours[state.day].r = document.getElementById('ramp-val-day').value;
-        calculate();
-    }
-    
-    function clearDay() { if(confirm("Reset today?")) { state.data[state.day] = {}; state.active[state.day] = []; render(); } }
-    function resetAll() { if(confirm("WIPE EVERYTHING?")) { localStorage.clear(); location.reload(); } }
-    function save() { localStorage.setItem('ops_vFinal_v4', JSON.stringify(state)); }
-    
-    function downloadTextReport() {
-        const s = JSON.parse(localStorage.getItem('ops_vFinal_v4'));
-        if (!s || !s.owner) { alert("No data found!"); return; }
-        let txt = "==========================================\n";
-        txt += `   WEEKLY REPORT: ${s.owner.toUpperCase()}\n==========================================\n\n`;
-        let gE = 0, gEff = 0;
-        ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
-            let dE = 0; 
-            const shift = parseFloat(s.hours[d].s) || 0;
-            const nphMins = parseFloat(s.hours[d].n) || 0;
-            const eff = shift - (nphMins / 60);
-            const rmp = parseFloat(s.hours[d].r) || 1;
-
-            txt += `--- ${d.toUpperCase()} ---\n`;
-            txt += `Shift: ${shift}h | NPH: ${nphMins}m | Net: ${eff.toFixed(2)}h | Ramp: ${rmp}\n`;
-            txt += `------------------------------------------\n`;
-            
-            s.active[d].forEach(k => {
-                Object.entries(CONFIG.audits[k] || CONFIG.verif[k]).forEach(([t, a]) => {
-                    const v = parseInt(s.data[d][k+'_'+t]) || 0;
-                    if(v > 0) { 
-                        txt += `${k} - ${t}: ${v}\n`; 
-                        dE += (v * a * rmp); 
-                    }
-                });
-            });
-            const dProd = eff > 0 ? Math.round(((dE/3600)/eff)*100) : 0;
-            txt += `DAILY PROD: ${dProd}%\n\n`;
-            gE += dE; gEff += Math.max(0, eff);
-        });
-        const wProd = gEff > 0 ? Math.round(((gE/3600)/gEff)*100) : 0;
-        txt += `==========================================\n`;
-        txt += `WEEKLY SCORE: ${wProd}%\n`;
-        txt += `==========================================`;
-        const blob = new Blob([txt], { type: 'text/plain' });
-        const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-        link.download = `${s.owner}_Performance_Report.txt`; link.click();
-    }
-
-    // TRIGGERED ONLY ONCE PER RE-OPEN/REFRESH
-    window.onload = () => { 
-        if(state.owner) {
-            init(); 
-            triggerToast(); // Show the crazy animation here
-        }
-        else document.getElementById('user-name-in').focus();
-    };
+window.onload = () => { 
+    if(state.owner) { init(); triggerToast(); }
+    else document.getElementById('user-name-in').focus();
+};
 </script>
 </body>
 </html>
