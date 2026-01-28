@@ -16,8 +16,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
         :root { --amz: #FF9900; --dark: #0F172A; --slate: #64748B; --border: #E2E8F0; --bg: #F8FAFC; --card: #FFFFFF; --text: #0F172A; }
         body.dark-mode { --bg: #020617; --card: #0F172A; --text: #F8FAFC; --border: #1E293B; --slate: #94A3B8; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; transition: background 0.3s; }
-        header { background: #1E293B; color: white; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--amz); z-index: 100; position: relative; }
+        
+        /* FIX: Changed overflow to allow scrolling for many processes */
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; transition: background 0.3s; }
+        
+        header { background: #1E293B; color: white; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--amz); z-index: 100; position: sticky; top: 0; }
         .logo b { color: var(--amz); text-transform: capitalize; }
         
         #update-toast { 
@@ -36,20 +39,34 @@
         .tabs { display: flex; gap: 5px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 10px; }
         .tab { padding: 6px 14px; border: none; border-radius: 7px; cursor: pointer; font-weight: 700; font-size: 11px; color: #94A3B8; background: transparent; }
         .tab.active { background: white !important; color: #0F172A !important; }
-        .selector-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px 30px; }
+        
+        /* FIX: Sticky selector bar so you don't lose it when scrolling */
+        .selector-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px 30px; position: sticky; top: 58px; z-index: 99; }
+        
         .chip { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 11px; font-weight: 600; background: var(--bg); color: var(--text); margin-right: 5px; margin-bottom: 5px; display: inline-block; }
         .chip.a-active { background: #3B82F6; color: white; border-color: #3B82F6; }
         .chip.v-active { background: #10B981; color: white; border-color: #10B981; }
-        main { display: flex; gap: 25px; padding: 25px 30px; height: calc(100vh - 180px); }
-        .scroll-side { flex: 1; overflow-y: auto; padding-right: 10px; }
-        .sticky-side { width: 400px; position: sticky; top: 0; }
+
+        /* FIX: Layout alignment for all views */
+        main { display: flex; gap: 25px; padding: 25px 30px; min-height: calc(100vh - 180px); align-items: flex-start; flex-wrap: wrap; }
+        .scroll-side { flex: 1; min-width: 400px; padding-bottom: 50px; }
+        
+        /* FIX: Sticky Right Side stays in place */
+        .sticky-side { width: 400px; position: sticky; top: 150px; }
+
+        @media (max-width: 1000px) {
+            .sticky-side { width: 100%; position: relative; top: 0; }
+            .scroll-side { min-width: 100%; }
+        }
+
         .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 15px; }
         .card-h { padding: 10px 15px; font-weight: 800; font-size: 11px; border-bottom: 1px solid var(--border); color: var(--slate); text-transform: uppercase; background: rgba(0,0,0,0.02); }
         .magic-score { background: var(--card); border-radius: 35px; padding: 35px 20px; text-align: center; border: 1px solid var(--border); transition: 0.3s; }
         .prod-val { font-family: 'Montserrat', sans-serif; font-size: 90px; font-weight: 900; letter-spacing: -4px; line-height: 0.8; }
-        #summary-ui { display: flex; flex-direction: column; padding: 30px; gap: 25px; height: calc(100vh - 80px); overflow-y: auto; }
-        .summary-top { display: flex; gap: 25px; align-items: flex-start; }
-        .st-container { flex: 1; }
+        
+        #summary-ui { display: flex; flex-direction: column; padding: 30px; gap: 25px; min-height: calc(100vh - 80px); }
+        .summary-top { display: flex; gap: 25px; align-items: flex-start; flex-wrap: wrap; }
+        .st-container { flex: 1; min-width: 400px; }
         .st { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; }
         .st th { background: rgba(0,0,0,0.05); padding: 12px; font-size: 10px; color: var(--slate); text-align: left; }
         .st td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text); }
@@ -132,7 +149,7 @@
             <button class="btn-mini" onclick="resetAll()" style="width:100%; margin-top:15px; padding:10px;">PURGE ALL DATA</button>
             <br><br>
             <button onclick="downloadTextReport()" style="background:transparent; color:#007185; border:1px solid #007185; padding:10px; border-radius:12px; cursor:pointer; width:100%; font-weight:bold; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; transition:0.3s;">Download Weekly Report</button>
-        </div>
+         </div>
     </div>
 </div>
 
@@ -151,7 +168,8 @@ const CONFIG = {
         "KPEX Bulk TT": { "Tickets": 2063 },
         "UPCX Tickets": { "Audits": 424 },
         "GTIN Tickets": { "Approval": 146, "RP": 21, "Count": 560 },
-        "SIM Appeals audits": { "Audits": 669.5 }
+        "SIM Appeals audits": { "Audits": 669.5 },
+        "GTIN Update": { "Audits": 600 }
     },
     verif: {
         "Brand Curation": { "V-BV": 46 },
@@ -164,7 +182,8 @@ const CONFIG = {
         "CRB Verif": { "V-CRB": 46 },
         "ASIN Probate Verif": { "V-Probate": 328 },
         "KPEX Verif": { "V-KPEX": 328 },
-        "SIM Appeals verif": { "verif": 669.5 }
+        "SIM Appeals verif": { "verif": 669.5 },
+        "GTIN verif": { "verif": 600 }
     }
 };
 
@@ -194,23 +213,14 @@ function showCredits(e) {
     const p = document.getElementById('crazy-pop');
     const title = document.getElementById('pop-title');
     const subtext = p.querySelector('p:nth-of-type(1)');
-    
-    // Save what was there before
     const originalTitle = title.innerHTML;
     const originalSub = subtext.innerHTML;
-
-    // Show your details
     title.innerHTML = `<span style="font-size:16px; color:var(--slate); font-weight:600;">Developed by</span><br><span style="color:var(--amz)">RAKESH KONAPAKALA</span>`;
     subtext.innerHTML = `Alias: <b>konapaks</b>`;
-
-    // Force display
     p.style.display = 'flex';
     playSound('success');
-
-    // Reset after 4 seconds so the "Welcome" message stays original
     setTimeout(() => {
         p.style.display = 'none';
-        // Put the original welcome text back so it's ready for next refresh
         title.innerHTML = originalTitle;
         subtext.innerHTML = originalSub;
     }, 4000);
@@ -233,10 +243,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-01-14T23:59:59').getTime();
+    const expiry = new Date('2026-01-31T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}, NPH In Minutes & SIM Appeals Added!`;
+        document.getElementById('toast-msg').innerText = `GTIN Update added! Layout now fully responsive for all views`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
@@ -302,7 +312,7 @@ function updateUI(prod, outId, capId, emoId, boxId) {
 
 function renderSummary() {
     const body = document.getElementById('sum-body');
-    document.getElementById('st-head').innerHTML = `<tr><th>PROCESS DETAIL</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th style="color:var(--amz)">TOT</th></tr>`;
+    document.getElementById('st-head').innerHTML = `<tr><th>PROCESS DETAIL</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th style="color:var(--amz)">TOTAL</th></tr>`;
     body.innerHTML = ''; const tasks = new Set(); let wE = 0, wEff = 0;
     ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
         state.active[d].forEach(k => tasks.add(k)); 
@@ -340,7 +350,7 @@ function downloadTextReport() {
     const s = JSON.parse(localStorage.getItem('ops_vFinal_v4'));
     if (!s || !s.owner) { alert("No data found!"); return; }
     let txt = "==========================================\n";
-    txt += `   WEEKLY REPORT: ${s.owner.toUpperCase()}\n==========================================\n\n`;
+    txt += `    WEEKLY REPORT: ${s.owner.toUpperCase()}\n==========================================\n\n`;
     let gE = 0, gEff = 0;
     ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
         let dE = 0; 
