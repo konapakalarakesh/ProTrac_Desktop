@@ -243,10 +243,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-01-31T23:59:59').getTime();
+    const expiry = new Date('2026-02-07T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `GTIN Update added! Layout now fully responsive for all views`;
+        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}! GO MOBILE!No limits—any screen, any size, use it anywhere! 🔥`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
@@ -386,3 +386,4 @@ window.onload = () => {
 </body>
 
 </html>
+
