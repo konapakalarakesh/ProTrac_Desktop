@@ -169,7 +169,8 @@ const CONFIG = {
         "UPCX Tickets": { "Audits": 424 },
         "GTIN Tickets": { "Approval": 146, "RP": 21, "Count": 560 },
         "SIM Appeals audits": { "Audits": 669.5 },
-        "GTIN Update": { "Audits": 600 }
+        "GTIN Update": { "Audits": 600 },
+        "BAKS": { "Tasks": 900 }
     },
     verif: {
         "Brand Curation": { "V-BV": 46 },
@@ -183,7 +184,8 @@ const CONFIG = {
         "ASIN Probate Verif": { "V-Probate": 328 },
         "KPEX Verif": { "V-KPEX": 328 },
         "SIM Appeals verif": { "verif": 669.5 },
-        "GTIN Update verif": { "verif": 600 }
+        "GTIN Update verif": { "verif": 600 },
+        "BAKS verif": { "V-Tasks": 900 }
     }
 };
 
@@ -243,10 +245,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-02-10T23:59:59').getTime();
+    const expiry = new Date('2026-03-18T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}! ⚡Boom! Our tool is officially live! 🔥`;
+        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()} 📢 Enter week and download report as CSV. BAKS program is added!`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
@@ -282,9 +284,18 @@ function renderCards() {
     state.active[state.day].forEach(k => {
         const conf = CONFIG.audits[k] || CONFIG.verif[k];
         const card = document.createElement('div'); card.className = 'card';
-        card.innerHTML = `<div class="card-h">${k}</div><div style="padding:12px">${Object.entries(conf).map(([t, a]) => `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="font-size:11px;font-weight:700;">${t}</label>
-        <input type="number" min="0" onkeydown="return isPos(event)" value="${state.data[state.day][k+'_'+t] || ''}" oninput="playSound('tick');state.data[state.day]['${k+'_'+t}']=this.value;calculate()" style="width:70px;padding:6px;border-radius:10px;border:1px solid var(--border);text-align:center;font-weight:800;background:var(--bg);color:var(--text);outline:none;"></div>`).join('')}</div>`;
+        card.innerHTML = `<div class="card-h">${k}</div><div style="padding:12px">${Object.entries(conf).map(([t, a]) => `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <label style="font-size:11px;font-weight:700;">${t}</label>
+                <input type="number" 
+                       min="0" 
+                       onkeydown="return isPos(event)" 
+                       value="${state.data[state.day][k+'_'+t] || ''}" 
+                       oninput="if(this.value.length > 4) this.value = this.value.slice(0,4); playSound('tick'); state.data[state.day]['${k+'_'+t}']=this.value; calculate();" 
+                       style="width:70px;padding:6px;border-radius:10px;border:1px solid var(--border);text-align:center;font-weight:800;background:var(--bg);color:var(--text);outline:none;">
+            </div>`).join('')}</div>`;
         zone.appendChild(card);
+
     });
 }
 
@@ -348,40 +359,85 @@ function save() { localStorage.setItem('ops_vFinal_v4', JSON.stringify(state)); 
 
 function downloadTextReport() {
     const s = JSON.parse(localStorage.getItem('ops_vFinal_v4'));
-    if (!s || !s.owner) { alert("No data found!"); return; }
-    let txt = "==========================================\n";
-    txt += `    WEEKLY REPORT: ${s.owner.toUpperCase()}\n==========================================\n\n`;
-    let gE = 0, gEff = 0;
+    if (!s || !s.owner) return alert("No data found!");
+
+    const wk = prompt("Enter Week Number:", "") || "NA";
+    const dt = new Date().toLocaleDateString('en-GB');
+    
+    // Header section exactly as per your screenshot
+    let csv = `WEEKLY PERFORMANCE REPORT\n`;
+    csv += `Associate,${s.owner.toUpperCase()}\n`;
+    csv += `Week Number,${wk}\n`;
+    csv += `Export Date,${dt}\n\n`;
+    
+    // Column Labels
+    csv += `Day,Process,Sub-Task,Count,Shift (Hrs),NPH (Mins),Net (Hrs),Ramp,Daily Prod %\n`;
+    
+    let totalE = 0, totalEff = 0;
+
     ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
-        let dE = 0; 
-        const shift = parseFloat(s.hours[d].s) || 0;
-        const nphMins = parseFloat(s.hours[d].n) || 0;
-        const eff = shift - (nphMins / 60);
-        const rmp = parseFloat(s.hours[d].r) || 1;
-        txt += `--- ${d.toUpperCase()} ---\n`;
-        txt += `Shift: ${shift}h | NPH: ${nphMins}m | Net: ${eff.toFixed(2)}h | Ramp: ${rmp}\n`;
-        txt += `------------------------------------------\n`;
+        const h = s.hours[d];
+        const eff = Math.max(0, h.s - (h.n / 60));
+        const rmp = parseFloat(h.r) || 1;
+        let dayE = 0;
+        let dayRows = [];
+
+        // Group tasks for this day
         s.active[d].forEach(k => {
-            Object.entries(CONFIG.audits[k] || CONFIG.verif[k]).forEach(([t, a]) => {
+            const conf = CONFIG.audits[k] || CONFIG.verif[k];
+            Object.entries(conf).forEach(([t, a]) => {
                 const v = parseInt(s.data[d][k+'_'+t]) || 0;
-                if(v > 0) { txt += `${k} - ${t}: ${v}\n`; dE += (v * a * rmp); }
+                if(v > 0) {
+                    dayE += (v * a * rmp);
+                    dayRows.push({ p: k, st: t, val: v });
+                }
             });
         });
-        const dProd = eff > 0 ? Math.round(((dE/3600)/eff)*100) : 0;
-        txt += `DAILY PROD: ${dProd}%\n\n`;
-        gE += dE; gEff += Math.max(0, eff);
-    });
-    const wProd = gEff > 0 ? Math.round(((gE/3600)/gEff)*100) : 0;
-    txt += `==========================================\nWEEKLY SCORE: ${wProd}%\n==========================================`;
-    const blob = new Blob([txt], { type: 'text/plain' });
-    const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-    link.download = `${s.owner}_Performance_Report.txt`; link.click();
-}
 
+        const dProd = eff > 0 ? Math.round(((dayE/3600)/eff)*100) : 0;
+
+        if (dayRows.length > 0) {
+            dayRows.forEach((row, index) => {
+                // Show Day info ONLY on the first row of the group
+                const dLab = (index === 0) ? d : "";
+                const sVal = (index === 0) ? h.s : "";
+                const nVal = (index === 0) ? h.n : "";
+                const netV = (index === 0) ? eff.toFixed(2) : "";
+                const rVal = (index === 0) ? rmp : "";
+                const pVal = (index === 0) ? `${dProd}%` : "";
+
+                csv += `${dLab},${row.p.replace(/,/g, "")},${row.st.replace(/,/g, "")},${row.val},${sVal},${nVal},${netV},${rVal},${pVal}\n`;
+            });
+            csv += `\n`; // Clean spacing between days
+        } else if (h.s > 0) {
+            csv += `${d},No Activity,-,0,${h.s},${h.n},${eff.toFixed(2)},${rmp},0%\n\n`;
+        }
+
+        totalE += dayE;
+        totalEff += eff;
+    });
+
+    const wProd = totalEff > 0 ? Math.round(((totalE/3600)/totalEff)*100) : 0;
+    csv += `TOTAL WEEKLY AGGREGATE,,,,,,${totalEff.toFixed(2)} Hrs,,${wProd}%\n`;
+
+    // Download Logic with specific filename: Week no _name_performace report
+    const BOM = '\uFEFF'; 
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Week_${wk}_${s.owner}_performance report.csv`;
+    link.click();
+}
 window.onload = () => { 
     if(state.owner) { init(); triggerToast(); }
     else document.getElementById('user-name-in').focus();
 };
+
+// Global listener: Saves whenever the user changes ANY input field
+document.addEventListener('input', () => {
+    save();
+});
+
 </script>
 </body>
 
