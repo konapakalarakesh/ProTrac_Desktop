@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-22V0EVLKTC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -13,67 +14,149 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
-        :root { --amz: #FF9900; --dark: #0F172A; --slate: #64748B; --border: #E2E8F0; --bg: #F8FAFC; --card: #FFFFFF; --text: #0F172A; }
-        body.dark-mode { --bg: #020617; --card: #0F172A; --text: #F8FAFC; --border: #1E293B; --slate: #94A3B8; }
-        
-        /* FIX: Changed overflow to allow scrolling for many processes */
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; transition: background 0.3s; }
-        
-        header { background: #1E293B; color: white; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--amz); z-index: 100; position: sticky; top: 0; }
-        .logo b { color: var(--amz); text-transform: capitalize; }
-        
-        #update-toast { 
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
-            background: var(--amz); color: white; padding: 12px 25px; 
-            border-radius: 50px; font-weight: 800; font-size: 13px; z-index: 50000;
-            display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(255,153,0,0.3);
-            transition: top 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-        #update-toast.show { top: 20px; }
-        .toast-emoji { font-size: 20px; animation: bounce 1s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+    
+    :root { 
+        --amz: #FF9900; 
+        --dark: #0F172A; 
+        --slate: #64748B; 
+        --border: #E2E8F0; 
+        --bg: #F8FAFC; 
+        --card: rgba(255, 255, 255, 0.95); /* Adjusted to 95% to let background show */
+        --text: #0F172A; 
+        --dot: #cbd5e1; 
+    }
 
-        #crazy-pop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); z-index: 20000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .pop-content { background: var(--card); padding: 40px; border-radius: 40px; text-align: center; border: 3px solid var(--amz); }
-        .tabs { display: flex; gap: 5px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 10px; }
-        .tab { padding: 6px 14px; border: none; border-radius: 7px; cursor: pointer; font-weight: 700; font-size: 11px; color: #94A3B8; background: transparent; }
-        .tab.active { background: white !important; color: #0F172A !important; }
-        
-        /* FIX: Sticky selector bar so you don't lose it when scrolling */
-        .selector-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px 30px; position: sticky; top: 58px; z-index: 99; }
-        
-        .chip { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 11px; font-weight: 600; background: var(--bg); color: var(--text); margin-right: 5px; margin-bottom: 5px; display: inline-block; }
-        .chip.a-active { background: #3B82F6; color: white; border-color: #3B82F6; }
-        .chip.v-active { background: #10B981; color: white; border-color: #10B981; }
+    body.dark-mode { 
+        --bg: #020617; 
+        --card: rgba(15, 23, 42, 0.95); /* Adjusted for Dark Mode */
+        --text: #F8FAFC; 
+        --border: #1E293B; 
+        --slate: #94A3B8; 
+        --dot: #1e293b; 
+    }
+    
+    /* THE HIGH-LEVEL ATMOSPHERE */
+    body { 
+        font-family: 'Plus Jakarta Sans', sans-serif; 
+        background-color: var(--bg); 
+        color: var(--text); 
+        margin: 0; 
+        min-height: 100vh; 
+        transition: background 0.5s ease;
+        position: relative;
+        overflow-x: hidden;
+    }
 
-        /* FIX: Layout alignment for all views */
-        main { display: flex; gap: 25px; padding: 25px 30px; min-height: calc(100vh - 180px); align-items: flex-start; flex-wrap: wrap; }
-        .scroll-side { flex: 1; min-width: 400px; padding-bottom: 50px; }
-        
-        /* FIX: Sticky Right Side stays in place */
-        .sticky-side { width: 400px; position: sticky; top: 150px; }
+    /* THE MOVING AURORA */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: 
+            radial-gradient(circle at 15% 15%, rgba(255, 153, 0, 0.1) 0%, transparent 40%),
+            radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+        filter: blur(60px);
+        z-index: -1;
+        animation: drift 15s infinite alternate ease-in-out;
+        pointer-events: none;
+    }
 
-        @media (max-width: 1000px) {
-            .sticky-side { width: 100%; position: relative; top: 0; }
-            .scroll-side { min-width: 100%; }
-        }
+    /* THE MICRO-GRID OVERLAY */
+    body::after {
+        content: "";
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-image: radial-gradient(var(--dot) 1.5px, transparent 1.5px);
+        background-size: 40px 40px;
+        opacity: 0.4;
+        z-index: -1;
+        pointer-events: none;
+    }
 
-        .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .card-h { padding: 10px 15px; font-weight: 800; font-size: 11px; border-bottom: 1px solid var(--border); color: var(--slate); text-transform: uppercase; background: rgba(0,0,0,0.02); }
-        .magic-score { background: var(--card); border-radius: 35px; padding: 35px 20px; text-align: center; border: 1px solid var(--border); transition: 0.3s; }
-        .prod-val { font-family: 'Montserrat', sans-serif; font-size: 90px; font-weight: 900; letter-spacing: -4px; line-height: 0.8; }
-        
-        #summary-ui { display: flex; flex-direction: column; padding: 30px; gap: 25px; min-height: calc(100vh - 80px); }
-        .summary-top { display: flex; gap: 25px; align-items: flex-start; flex-wrap: wrap; }
-        .st-container { flex: 1; min-width: 400px; }
-        .st { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; }
-        .st th { background: rgba(0,0,0,0.05); padding: 12px; font-size: 10px; color: var(--slate); text-align: left; }
-        .st td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text); }
-        .btn-mini { background: transparent; border: 1px solid #FCA5A5; padding: 6px; border-radius: 8px; color: #EF4444; font-size: 9px; font-weight: 800; cursor: pointer; }
-        .hidden { display: none !important; }
-        #name-gate { position: fixed; inset: 0; background: #0F172A; z-index: 30000; display: flex; align-items: center; justify-content: center; color: white; }
-    </style>
+    @keyframes drift {
+        0% { transform: scale(1) translate(0, 0); }
+        100% { transform: scale(1.1) translate(2%, 2%); }
+    }
+    
+    header { background: #1E293B; color: white; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--amz); z-index: 100; position: sticky; top: 0; }
+    .logo b { color: var(--amz); text-transform: capitalize; }
+   #update-toast { 
+    position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
+    /* Thick Silk Gradient: White, Soft Blue, and Rose Pink */
+    background: linear-gradient(135deg, #ffffff 0%, #dbeafe 50%, #fbcfe8 100%);
+    backdrop-filter: blur(15px);
+    
+    /* Contrast Text: Deep Navy for maximum legibility on light colors */
+    color: #1a2331; 
+    padding: 12px 30px; 
+    border-radius: 50px; 
+    
+    /* Clean & Sleek Text Style */
+    font-weight: 600; 
+    font-size: 14px; 
+    letter-spacing: 0.6px;
+    z-index: 50000;
+    
+    display: flex; align-items: center; gap: 12px; 
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    
+    /* No Shadow as requested */
+    box-shadow: none; 
+    
+    transition: top 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+#update-toast.show { top: 30px; }
+
+.toast-emoji { 
+    font-size: 20px; 
+    animation: luxury-float 3s infinite ease-in-out; 
+}
+
+@keyframes luxury-float { 
+    0%, 100% { transform: translateY(0) rotate(-4deg); } 
+    50% { transform: translateY(-6px) rotate(4deg); } 
+}
+
+    #crazy-pop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); z-index: 20000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+    .pop-content { background: var(--card); padding: 40px; border-radius: 40px; text-align: center; border: 3px solid var(--amz); }
+    .tabs { display: flex; gap: 5px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 10px; }
+    .tab { padding: 6px 14px; border: none; border-radius: 7px; cursor: pointer; font-weight: 700; font-size: 11px; color: #94A3B8; background: transparent; }
+    .tab.active { background: white !important; color: #0F172A !important; }
+    
+    .selector-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px 30px; position: sticky; top: 58px; z-index: 99; backdrop-filter: blur(10px); }
+    
+    .chip { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 11px; font-weight: 600; background: var(--bg); color: var(--text); margin-right: 5px; margin-bottom: 5px; display: inline-block; }
+    .chip.a-active { background: #3B82F6; color: white; border-color: #3B82F6; }
+    .chip.v-active { background: #10B981; color: white; border-color: #10B981; }
+
+    main { display: flex; gap: 25px; padding: 25px 30px; min-height: calc(100vh - 180px); align-items: flex-start; flex-wrap: wrap; }
+    .scroll-side { flex: 1; min-width: 400px; padding-bottom: 50px; }
+    .sticky-side { width: 400px; position: sticky; top: 150px; }
+
+    @media (max-width: 1000px) {
+        .sticky-side { width: 100%; position: relative; top: 0; }
+        .scroll-side { min-width: 100%; }
+    }
+
+    .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 15px; backdrop-filter: blur(5px); }
+    .card-h { padding: 10px 15px; font-weight: 800; font-size: 11px; border-bottom: 1px solid var(--border); color: var(--slate); text-transform: uppercase; background: rgba(0,0,0,0.02); }
+    .magic-score { background: var(--card); border-radius: 35px; padding: 35px 20px; text-align: center; border: 1px solid var(--border); transition: 0.3s; backdrop-filter: blur(10px); }
+    .prod-val { font-family: 'Montserrat', sans-serif; font-size: 90px; font-weight: 900; letter-spacing: -4px; line-height: 0.8; }
+    
+    #summary-ui { display: flex; flex-direction: column; padding: 30px; gap: 25px; min-height: calc(100vh - 80px); }
+    .summary-top { display: flex; gap: 25px; align-items: flex-start; flex-wrap: wrap; }
+    .st-container { flex: 1; min-width: 400px; }
+    .st { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; backdrop-filter: blur(10px); }
+    .st th { background: rgba(0,0,0,0.05); padding: 12px; font-size: 10px; color: var(--slate); text-align: left; }
+    .st td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text); }
+    .btn-mini { background: transparent; border: 1px solid #FCA5A5; padding: 6px; border-radius: 8px; color: #EF4444; font-size: 9px; font-weight: 800; cursor: pointer; }
+    .hidden { display: none !important; }
+    #name-gate { position: fixed; inset: 0; background: #0F172A; z-index: 30000; display: flex; align-items: center; justify-content: center; color: white; }
+</style>
 </head>
 <body>
 
@@ -94,23 +177,36 @@
 <div id="name-gate">
     <div style="text-align: center;">
         <h1 style="font-family: 'Space Grotesk'; font-size: 18px; letter-spacing: 2px;">Welcome Amazonian👋</h1>
-        <input type="text" id="user-name-in" onkeydown="if(event.key==='Enter') setName()" placeholder="Your sweet name..." style="padding:15px; border-radius:12px; border:none; width:260px; text-align:center; font-weight:700; outline:none;">
+        <input type="text" id="user-name-in" maxlength="12" onkeydown="if(event.key==='Enter') setName()" placeholder="Your sweet name..." style="padding:15px; border-radius:12px; border:none; width:260px; text-align:center; font-weight:700; outline:none;">
         <br><button onclick="setName()" style="margin-top:20px; padding:12px 50px; border-radius:30px; background: var(--amz); border:none; font-weight:800; cursor:pointer; color:white;">LAUNCH</button>
     </div>
 </div>
 
 <header>
-    <div class="logo" id="main-logo">...</div>
+    <div class="logo-container" style="display: flex; flex-direction: column; cursor: default; user-select: none;">
+        <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 650; font-size: 20px; color: white; line-height: 1;">
+            amazon<span style="color: var(--amz); font-weight: 400;">.in</span>
+        </span>
+        <div style="width: 75px; height: 10px; position: relative; margin-top: -3px;">
+            <div style="width: 100%; height: 100%; border-bottom: 2px solid var(--amz); border-radius: 50%;"></div>
+            <div style="width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent; border-top: 4px solid var(--amz); position: absolute; right: -1px; bottom: 2px; transform: rotate(-20deg);"></div>
+        </div>
+    </div>
+
+    <div class="logo" id="main-logo" style="font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.9); letter-spacing: 2px; white-space: nowrap; text-transform: uppercase;">
+    </div>
+
     <div style="display:flex; align-items:center; gap:20px;">
         <div class="tabs" id="day-tabs"></div>
         <div id="dark-toggle" onclick="toggleDark()" style="cursor:pointer; font-size:20px;">🌓</div>
-        <div onclick="showCredits(event)" title="Author Info" style="cursor:pointer; font-size:14px; opacity:0.4; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); margin-left:10px; color:white;">ⓘ</div>
+        <div onclick="logout()" title="Logout & Clear Name" style="cursor:pointer; font-size:18px; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); color:#FCA5A5; transition:0.3s;" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#FCA5A5'">🏃‍♂️</div>
+        <div onclick="showCredits(event)" title="Creator Info" style="cursor:pointer; font-size:14px; opacity:0.4; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); margin-left:10px; color:white;">ⓘ</div>
     </div>
 </header>
 
 <div class="selector-bar" id="sel-area">
-    <div style="margin-bottom:8px;"><span style="font-size:10px; font-weight:800; color:var(--slate); width:110px; display:inline-block;">AUDITS</span><div id="audit-chips" style="display:inline-flex; flex-wrap:wrap;"></div></div>
-    <div><span style="font-size:10px; font-weight:800; color:var(--slate); width:110px; display:inline-block;">VERIFICATIONS</span><div id="verif-chips" style="display:inline-flex; flex-wrap:wrap;"></div></div>
+    <div style="margin-bottom:8px;"><span style="font-size:10px; font-weight:800; color:#FF9900; width:110px; display:inline-block;">AUDITS</span><div id="audit-chips" style="display:inline-flex; flex-wrap:wrap;"></div></div>
+    <div><span style="font-size:10px; font-weight:800; color:#FF9900; width:110px; display:inline-block;">VERIFICATIONS</span><div id="verif-chips" style="display:inline-flex; flex-wrap:wrap;"></div></div>
 </div>
 
 <main id="main-ui">
@@ -125,12 +221,29 @@
             <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">SHIFT (HRS)</label><input type="number" min="0" onkeydown="return isPos(event)" id="s-in" value="8" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
             <div style="background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;"><label style="font-size:9px; font-weight:800; color:var(--slate);">NPH (MINS)</label><input type="number" min="0" max="480" onkeydown="return isPos(event)" id="n-in" value="0" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);"></div>
         </div>
-        <div style="margin-top:10px; background:var(--card); padding:8px; border-radius:15px; border:1px solid var(--border); text-align:center;">
-            <label style="font-size:9px; font-weight:800; color:var(--amz);">RAMP MULTIPLIER</label>
-            <input type="number" min="0" onkeydown="return isPos(event)" id="ramp-val-day" value="1" step="0.1" oninput="updateBase()" style="width:100%; border:none; font-size:18px; font-weight:800; text-align:center; outline:none; background:transparent; color:var(--text);">
-        </div>
-        
-        <button class="btn-mini" onclick="clearDay()" style="width:100%; margin-top:10px;">RESET DAY</button>
+       <div style="margin-top:10px; background:var(--card); padding:12px; border-radius:15px; border:1px solid var(--border); position: relative;">
+    <span id="auto-date-display" style="position: absolute; top: 10px; right: 12px; font-size: 10px; font-weight: 800; color: white; background: var(--amz); padding: 2px 10px; border-radius: 20px; box-shadow: 0 2px 5px rgba(255,153,0,0.3);">
+    --/--/----
+</span>
+
+    <label style="font-size:9px; font-weight:800; color:var(--amz); text-transform:uppercase; display: block; margin-bottom: 8px;">NPH Reasons / Remarks</label>
+    
+    <textarea id="nph-reason-day" 
+    oninput="saveReason()" 
+    onkeydown="if(event.key==='Enter'){ 
+        event.preventDefault(); 
+        const lines = this.value.trim().split('\n');
+        const lastLine = lines[lines.length-1];
+        const match = lastLine.match(/^(\d+)\./);
+        if(!match && this.value.trim().length > 0) this.value = '1. ' + this.value;
+        const nextNum = match ? parseInt(match[1]) + 1 : (this.value.trim() ? 2 : 1);
+        this.value = this.value.trim() + '\n' + nextNum + '. ';
+        saveReason();
+    }"
+    placeholder=" Ex &#10; 1. Team meeting&#10;2. Deep dive" 
+    style="width:100%; border:none; font-size:12px; font-weight:600; text-align:left; outline:none; background:transparent; color:var(--text); resize:none; font-family:inherit; height:65px; padding:0; line-height:1.4; opacity: 0.8;">1. </textarea>
+</div>
+        <div onclick="clearDay()" style="cursor:pointer; text-align:center; font-size:10px; font-weight:800; color:var(--slate); background:var(--bg); padding:8px; border-radius:15px; margin:10px auto 0 auto; width:80%; transition:0.2s; border:1px solid var(--border);" onmouseover="this.style.background='#EF4444'; this.style.color='white'; this.style.borderColor='#EF4444'" onmouseout="this.style.background='var(--bg)'; this.style.color='var(--slate)'; this.style.borderColor='var(--border)'">RESET DAY ↺</div>
     </div>
 </main>
 
@@ -140,19 +253,51 @@
             <h2 id="summary-title" style="font-weight: 900; font-size: 24px; margin-bottom: 15px; color: var(--amz);"></h2>
             <table class="st"><thead id="st-head"></thead><tbody id="sum-body"></tbody></table>
         </div>
+
         <div style="width: 350px;">
             <div id="week-magic-box" class="magic-score" style="border: 2px solid var(--amz); background: var(--card);">
                 <span id="week-emoji" style="font-size: 50px; display: block; margin-bottom: 15px;">✨</span>
                 <div id="week-prod-out" class="prod-val">0%</div>
                 <span id="week-caption-out" style="font-weight:800; font-size:12px; margin-top:15px; display:block;">WEEKLY AGGREGATE</span>
             </div>
-            <button class="btn-mini" onclick="resetAll()" style="width:100%; margin-top:15px; padding:10px;">PURGE ALL DATA</button>
-            <br><br>
-            <button onclick="downloadTextReport()" style="background:transparent; color:#007185; border:1px solid #007185; padding:10px; border-radius:12px; cursor:pointer; width:100%; font-weight:bold; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; transition:0.3s;">Download Weekly Report</button>
-         </div>
-    </div>
-</div>
 
+            <button onclick="downloadTextReport()" 
+    style="width:80%; display:block; margin:15px auto; padding:10px; border-radius:15px; font-size:10px; font-weight:800; text-transform:uppercase; cursor:pointer; transition:0.2s; background:transparent; color:#007185; border:1px solid rgba(0, 113, 133, 0.3);" 
+    onmouseover="this.style.background='#007185'; this.style.color='white'; this.style.borderColor='#007185';" 
+    onmouseout="this.style.background='transparent'; this.style.color='#007185'; this.style.borderColor='rgba(0, 113, 133, 0.3)';">
+    Download Weekly Report</button>
+
+            <div onclick="resetAll()" style="cursor:pointer; text-align:center; font-size:10px; font-weight:800; color:var(--slate); background:var(--bg); padding:10px; border-radius:15px; margin:15px auto; width:80%; transition:0.2s; border:1px solid var(--border);" 
+                onmouseover="this.style.background='#EF4444'; this.style.color='white'; this.style.borderColor='#EF4444'" 
+                onmouseout="this.style.background='var(--bg)'; this.style.color='var(--slate)'; this.style.borderColor='var(--border)'">
+                WIPE WEEKLY DATA 🗑️
+            </div>
+
+            <div style="background:var(--card); border:1px solid var(--border); border-radius:15px; padding:15px;">
+                <label style="font-size:9px; font-weight:800; color:var(--amz); text-transform:uppercase; display:block; margin-bottom:12px;">Quick Links</label>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+    <a href="https://www.cp-central.catalog.amazon.dev/#/annotator/time-tracker" target="_blank" 
+       style="text-decoration:none; display:flex; justify-content:space-between; padding:10px; background:var(--bg); border-radius:10px; border:1px solid var(--border); transition:0.2s;" 
+       onmouseover="this.style.background='rgba(255,153,0,0.9)'; this.style.transform='translateX(5px)'; this.querySelector('span').style.color='white';" 
+       onmouseout="this.style.background='var(--bg)'; this.style.transform='translateX(0)'; this.querySelector('span').style.color='var(--text)';"
+    >
+        <span style="font-size:11px; font-weight:700; color:var(--text); transition:0.2s;">Apply NPH</span>
+        <span style="color:var(--amz);">↗</span>
+    </a>
+
+    <a href="https://atoz.amazon.work/time/request" target="_blank" 
+       style="text-decoration:none; display:flex; justify-content:space-between; padding:10px; background:var(--bg); border-radius:10px; border:1px solid var(--border); transition:0.2s;" 
+       onmouseover="this.style.background='rgba(59,130,246,0.9)'; this.style.transform='translateX(5px)'; this.querySelector('span').style.color='white';" 
+       onmouseout="this.style.background='var(--bg)'; this.style.transform='translateX(0)'; this.querySelector('span').style.color='var(--text)';"
+    >
+        <span style="font-size:11px; font-weight:700; color:var(--text); transition:0.2s;">Apply Leaves</span>
+        <span style="color:#3B82F6;">↗</span>
+    </a>
+          </div>
+            </div>
+        </div>
+    </div>
+</div>            
 <script>
 const CONFIG = {
     audits: {
@@ -203,7 +348,17 @@ function playSound(type) {
     osc.start(); osc.stop(ctx.currentTime + 0.5);
 }
 
-let state = JSON.parse(localStorage.getItem('ops_vFinal_v4')) || { owner: '', day: 'Mon', darkMode: false, lastProd: 0, active: { Mon:[], Tue:[], Wed:[], Thu:[], Fri:[] }, data: { Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{} }, hours: { Mon:{s:8, n:0, r:1}, Tue:{s:8, n:0, r:1}, Wed:{s:8, n:0, r:1}, Thu:{s:8, n:0, r:1}, Fri:{s:8, n:0, r:1} } };
+// Fixed State Initialization to include 'reasons'
+let state = JSON.parse(localStorage.getItem('ops_vFinal_v4')) || { 
+    owner: '', day: 'Mon', darkMode: false, lastProd: 0, 
+    active: { Mon:[], Tue:[], Wed:[], Thu:[], Fri:[] }, 
+    data: { Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{} }, 
+    reasons: { Mon:'', Tue:'', Wed:'', Thu:'', Fri:'' }, 
+    hours: { Mon:{s:8, n:0, r:1}, Tue:{s:8, n:0, r:1}, Wed:{s:8, n:0, r:1}, Thu:{s:8, n:0, r:1}, Fri:{s:8, n:0, r:1} } 
+};
+
+// If old user doesn't have reasons object, add it
+if(!state.reasons) state.reasons = { Mon:'', Tue:'', Wed:'', Thu:'', Fri:'' };
 
 function toggleDark() { playSound('pop'); state.darkMode = !state.darkMode; applyTheme(); save(); }
 function applyTheme() { document.body.classList.toggle('dark-mode', state.darkMode); }
@@ -245,10 +400,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-03-18T23:59:59').getTime();
+    const expiry = new Date('2026-04-08T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()} 📢 Enter week and download report as CSV. BAKS program is added!`;
+        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}  Explore the new updates 🍾`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
@@ -264,8 +419,11 @@ function render() {
     else {
         document.getElementById('s-in').value = state.hours[state.day].s; 
         document.getElementById('n-in').value = state.hours[state.day].n;
-        document.getElementById('ramp-val-day').value = state.hours[state.day].r || 1;
-        renderChips('audits', 'audit-chips', 'a-active'); renderChips('verif', 'verif-chips', 'v-active');
+        // Correctly load the reason for the current day
+        document.getElementById('nph-reason-day').value = state.reasons[state.day] || "";
+        renderChips('audits', 'audit-chips', 'a-active'); 
+        renderChips('verif', 'verif-chips', 'v-active');
+        updateSmartDate();
         renderCards(); calculate();
     }
 }
@@ -295,23 +453,38 @@ function renderCards() {
                        style="width:70px;padding:6px;border-radius:10px;border:1px solid var(--border);text-align:center;font-weight:800;background:var(--bg);color:var(--text);outline:none;">
             </div>`).join('')}</div>`;
         zone.appendChild(card);
-
     });
 }
 
 function calculate() {
     let earned = 0; const h = state.hours[state.day]; 
-    const eff = (h.s - (h.n / 60)); 
-    const ramp = parseFloat(h.r) || 1;
-    state.active[state.day].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => earned += (state.data[state.day][k+'_'+t] || 0) * a); });
-    const prod = eff > 0 ? Math.round((((earned * ramp)/3600)/eff)*100) : 0;
+    const ramp = 1; // Defaulted to 1 as multiplier was replaced by text area
+
+    h.n = Math.min(480, Math.max(0, parseInt(h.n) || 0));
+
+    state.active[state.day].forEach(k => { 
+        const conf = CONFIG.audits[k] || CONFIG.verif[k]; 
+        Object.entries(conf).forEach(([t, a]) => {
+            const val = parseFloat(state.data[state.day][k+'_'+t]) || 0;
+            earned += val * a;
+        }); 
+    });
+
+    const shiftMins = (parseFloat(h.s) || 8) * 60;
+    const baseProd = shiftMins > 0 ? (h.n / shiftMins) * 100 : 0;
+    const earnedHours = earned / 3600;
+    const outputProd = (parseFloat(h.s) || 8) > 0 ? (earnedHours / h.s) * 100 : 0;
+
+    const prod = Math.round(baseProd + outputProd);
     if(prod >= 100 && state.lastProd < 100) playSound('success');
-    state.lastProd = prod; updateUI(prod, 'prod-out', 'caption-out', 'prod-emoji', 'magic-box');
+    state.lastProd = prod; 
+    updateUI(prod, 'prod-out', 'caption-out', 'prod-emoji', 'magic-box');
 }
 
 function updateUI(prod, outId, capId, emoId, boxId) {
     const out = document.getElementById(outId); const cap = document.getElementById(capId);
     const emo = document.getElementById(emoId); const box = document.getElementById(boxId);
+    if(!out || !cap || !emo || !box) return;
     const displayProd = Math.min(prod, 1000);
     out.innerText = displayProd + '%';
     const tiers = [{l:100,m:"GOD MODE!",e:"🚀"},{l:70,m:"High Velocity",e:"🔥"},{l:40,m:"Solid",e:"💪"},{l:0,m:"Ready",e:"🔋"}];
@@ -324,14 +497,18 @@ function updateUI(prod, outId, capId, emoId, boxId) {
 function renderSummary() {
     const body = document.getElementById('sum-body');
     document.getElementById('st-head').innerHTML = `<tr><th>PROCESS DETAIL</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th style="color:var(--amz)">TOTAL</th></tr>`;
-    body.innerHTML = ''; const tasks = new Set(); let wE = 0, wEff = 0;
+    body.innerHTML = ''; const tasks = new Set(); 
+    let wE = 0; let totalNph = 0;
+
     ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
         state.active[d].forEach(k => tasks.add(k)); 
-        const dayEff = Math.max(0, (state.hours[d].s - (state.hours[d].n / 60)));
-        const dayRamp = parseFloat(state.hours[d].r) || 1;
-        wEff += dayEff;
-        state.active[d].forEach(k => { const conf = CONFIG.audits[k] || CONFIG.verif[k]; Object.entries(conf).forEach(([t, a]) => wE += (state.data[d][k+'_'+t] || 0) * a * dayRamp); });
+        totalNph += (parseInt(state.hours[d].n) || 0);
+        state.active[d].forEach(k => { 
+            const conf = CONFIG.audits[k] || CONFIG.verif[k]; 
+            Object.entries(conf).forEach(([t, a]) => wE += (parseFloat(state.data[d][k+'_'+t]) || 0) * a); 
+        });
     });
+
     tasks.forEach(k => {
         Object.keys(CONFIG.audits[k] || CONFIG.verif[k]).forEach(t => {
             let r = `<tr><td><b style="font-size:12px">${k}</b><br><small style="color:var(--slate)">${t}</small></td>`, tot = 0;
@@ -339,88 +516,131 @@ function renderSummary() {
             if(tot > 0) body.innerHTML += r + `<td style="font-weight:900;color:var(--amz);text-align:center;">${tot}</td></tr>`;
         });
     });
-    const wProd = wEff > 0 ? Math.round(((wE/3600)/wEff)*100) : 0;
+  // ONLY SHOW NPH IF THERE IS DATA
+    if (totalNph > 0) {
+        let nphR = `<tr style="background:rgba(255,153,0,0.05); font-weight:700;"><td>NON-PRODUCTIVE (NPH)</td>`;
+        ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
+            let n = parseInt(state.hours[d].n) || 0;
+            nphR += `<td>${n ? n + 'm' : '-'}</td>`;
+        });
+        body.innerHTML += nphR + `<td style="color:var(--amz); font-weight:900; text-align:center;">${totalNph}m</td></tr>`;
+    }
+
+    const totalShiftMins = 5 * 8 * 60;
+    const baseWProd = (totalNph / totalShiftMins) * 100;
+    const outputWProd = ((wE/3600) / 40) * 100;
+    const wProd = Math.round(baseWProd + outputWProd);
+    
     updateUI(wProd, 'week-prod-out', 'week-caption-out', 'week-emoji', 'week-magic-box');
 }
 
 function updateBase() { 
     playSound('tick'); 
     let nInput = document.getElementById('n-in');
-    if (nInput.value > 480) nInput.value = 480; 
-    state.hours[state.day].s = document.getElementById('s-in').value; 
-    state.hours[state.day].n = nInput.value; 
-    state.hours[state.day].r = document.getElementById('ramp-val-day').value;
+    let sInput = document.getElementById('s-in');
+
+    let nVal = parseInt(nInput.value) || 0;
+    if (nVal > 480) nVal = 480;
+    if (nVal < 0) nVal = 0;
+    nInput.value = nVal;
+
+    state.hours[state.day].s = sInput.value; 
+    state.hours[state.day].n = nVal; 
+    // Removed ramp-val-day logic to prevent crashes
     calculate();
 }
 
-function clearDay() { if(confirm("Reset today?")) { state.data[state.day] = {}; state.active[state.day] = []; render(); } }
-function resetAll() { if(confirm("WIPE EVERYTHING?")) { localStorage.clear(); location.reload(); } }
+function saveReason() {
+    state.reasons[state.day] = document.getElementById('nph-reason-day').value;
+    save();
+}
+
+// 1. Reset Current Day (Only clears today's metrics)
+function clearDay() { 
+    if(confirm("Clear today's data?")) { 
+        state.data[state.day] = {}; 
+        state.active[state.day] = []; 
+        state.hours[state.day].n = 0; 
+        state.reasons[state.day] = ""; 
+        render(); 
+    } 
+}
+
+// 2. Wipe Weekly Database (Clears all days, but keeps you logged in)
+function resetAll() { 
+    if(confirm("WIPE ALL WEEKLY DATA?")) { 
+        const name = state.owner; // Save your name
+        const theme = state.darkMode; // Save your theme
+        state = { 
+            owner: name, day: 'Mon', darkMode: theme, lastProd: 0, 
+            active: { Mon:[], Tue:[], Wed:[], Thu:[], Fri:[] }, 
+            data: { Mon:{}, Tue:{}, Wed:{}, Thu:{}, Fri:{} }, 
+            reasons: { Mon:'', Tue:'', Wed:'', Thu:'', Fri:'' }, 
+            hours: { Mon:{s:8, n:0, r:1}, Tue:{s:8, n:0, r:1}, Wed:{s:8, n:0, r:1}, Thu:{s:8, n:0, r:1}, Fri:{s:8, n:0, r:1} } 
+        };
+        save();
+        location.reload(); 
+    } 
+}
+
+// 3. New Logout Function (To actually exit the app)
+function logout() {
+    if(confirm("Logout & Clear data")) {
+        localStorage.clear();
+        location.reload();
+    }
+}
 function save() { localStorage.setItem('ops_vFinal_v4', JSON.stringify(state)); }
 
 function downloadTextReport() {
     const s = JSON.parse(localStorage.getItem('ops_vFinal_v4'));
     if (!s || !s.owner) return alert("No data found!");
 
-    const wk = prompt("Enter Week Number:", "") || "NA";
+    let wk = "";
+    while (wk !== null && wk.trim() === "") {
+        wk = prompt("⚠️ Week Number is required to download:\nPlease enter Week Number:", "");
+    }
+    if (wk === null) return; 
+
     const dt = new Date().toLocaleDateString('en-GB');
+  let csv = `WEEKLY PERFORMANCE REPORT\nAssociate,${s.owner.toUpperCase()}\nWeek Number,${wk}\nExport Date,${dt}\n\n`;
+    csv += `Day,Process,Sub-Task,Count,Shift (Hrs),NPH (Mins),NPH Reasons,Daily Prod %\n`;
     
-    // Header section exactly as per your screenshot
-    let csv = `WEEKLY PERFORMANCE REPORT\n`;
-    csv += `Associate,${s.owner.toUpperCase()}\n`;
-    csv += `Week Number,${wk}\n`;
-    csv += `Export Date,${dt}\n\n`;
-    
-    // Column Labels
-    csv += `Day,Process,Sub-Task,Count,Shift (Hrs),NPH (Mins),Net (Hrs),Ramp,Daily Prod %\n`;
-    
-    let totalE = 0, totalEff = 0;
+    let totalE = 0, totalN = 0;
 
     ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
         const h = s.hours[d];
-        const eff = Math.max(0, h.s - (h.n / 60));
-        const rmp = parseFloat(h.r) || 1;
+      const reas = `"${(s.reasons[d] || "").replace(/"/g, '""')}"`;        
         let dayE = 0;
         let dayRows = [];
 
-        // Group tasks for this day
         s.active[d].forEach(k => {
             const conf = CONFIG.audits[k] || CONFIG.verif[k];
             Object.entries(conf).forEach(([t, a]) => {
                 const v = parseInt(s.data[d][k+'_'+t]) || 0;
-                if(v > 0) {
-                    dayE += (v * a * rmp);
-                    dayRows.push({ p: k, st: t, val: v });
-                }
+                if(v > 0) { dayE += (v * a); dayRows.push({ p: k, st: t, val: v }); }
             });
         });
 
-        const dProd = eff > 0 ? Math.round(((dayE/3600)/eff)*100) : 0;
+        const dProd = Math.round(((h.n/480)*100) + (((dayE/3600)/8)*100));
 
         if (dayRows.length > 0) {
             dayRows.forEach((row, index) => {
-                // Show Day info ONLY on the first row of the group
                 const dLab = (index === 0) ? d : "";
                 const sVal = (index === 0) ? h.s : "";
                 const nVal = (index === 0) ? h.n : "";
-                const netV = (index === 0) ? eff.toFixed(2) : "";
-                const rVal = (index === 0) ? rmp : "";
                 const pVal = (index === 0) ? `${dProd}%` : "";
-
-                csv += `${dLab},${row.p.replace(/,/g, "")},${row.st.replace(/,/g, "")},${row.val},${sVal},${nVal},${netV},${rVal},${pVal}\n`;
+                csv += `${dLab},${row.p.replace(/,/g, "")},${row.st.replace(/,/g, "")},${row.val},${sVal},${nVal},${reas},${pVal}\n`;
             });
-            csv += `\n`; // Clean spacing between days
-        } else if (h.s > 0) {
-            csv += `${d},No Activity,-,0,${h.s},${h.n},${eff.toFixed(2)},${rmp},0%\n\n`;
+            csv += `\n`;
+        } else {
+            csv += `${d},No Activity,-,0,${h.s},${h.n},${reas},${dProd}%\n\n`;
         }
-
-        totalE += dayE;
-        totalEff += eff;
+        totalE += dayE; totalN += parseInt(h.n)||0;
     });
 
-    const wProd = totalEff > 0 ? Math.round(((totalE/3600)/totalEff)*100) : 0;
-    csv += `TOTAL WEEKLY AGGREGATE,,,,,,${totalEff.toFixed(2)} Hrs,,${wProd}%\n`;
-
-    // Download Logic with specific filename: Week no _name_performace report
+    const wProd = Math.round(((totalN/2400)*100) + (((totalE/3600)/40)*100));
+    csv += `TOTAL WEEKLY AGGREGATE,,,,,,,${wProd}%\n`;
     const BOM = '\uFEFF'; 
     const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
@@ -428,21 +648,92 @@ function downloadTextReport() {
     link.download = `Week_${wk}_${s.owner}_performance report.csv`;
     link.click();
 }
+
 window.onload = () => { 
     if(state.owner) { init(); triggerToast(); }
     else document.getElementById('user-name-in').focus();
 };
 
-// Global listener: Saves whenever the user changes ANY input field
-document.addEventListener('input', () => {
-    save();
+document.addEventListener('input', (e) => {
+    if(e.target.id !== 'nph-reason-day') save();
 });
+function updateSmartDate() {
+    const daysMap = { 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5 };
+    const targetDay = daysMap[state.day];
+    
+    if (!targetDay) {
+        document.getElementById('auto-date-display').innerText = "Weekly View";
+        return;
+    }
+
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 is Sun, 1 is Mon...
+    const diff = targetDay - currentDay;
+    
+    const displayDate = new Date(now);
+    displayDate.setDate(now.getDate() + diff);
+
+    const formatted = displayDate.toLocaleDateString('en-GB', { 
+        day: '2-digit', month: 'short', year: 'numeric' 
+    });
+
+    document.getElementById('auto-date-display').innerText = formatted;
+}
 
 </script>
+
+<div id="rating-popup" style="display: none; position: fixed; bottom: 20px; right: 20px; background: var(--bg); border: 1px solid var(--amz); border-radius: 12px; padding: 15px; width: 180px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; transition: 0.5s; opacity: 0;">
+    <p style="font-size: 10px; font-weight: 700; color: var(--text); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Enjoying the update?</p>
+    <div style="display: flex; justify-content: center; gap: 5px; font-size: 20px; cursor: pointer;">
+        <span onclick="submitRating(1)" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(1)'" style="filter: grayscale(1); transition: 0.2s;">⭐</span>
+        <span onclick="submitRating(2)" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(1)'" style="filter: grayscale(1); transition: 0.2s;">⭐</span>
+        <span onclick="submitRating(3)" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(1)'" style="filter: grayscale(1); transition: 0.2s;">⭐</span>
+        <span onclick="submitRating(4)" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(1)'" style="filter: grayscale(1); transition: 0.2s;">⭐</span>
+        <span onclick="submitRating(5)" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(1)'" style="filter: grayscale(1); transition: 0.2s;">⭐</span>
+    </div>
+    <p id="rate-ok" style="display: none; font-size: 10px; color: var(--amz); font-weight: 700; margin-top: 8px;">Thanks, Rakesh! 🚀</p>
+</div>
+
+<script>
+    (function() {
+        // 1. Only run if they haven't rated yet
+        if (localStorage.getItem('tool_rated_v2')) return;
+
+        // 2. Wait 5 seconds after page load to show the popup
+        setTimeout(() => {
+            const popup = document.getElementById('rating-popup');
+            popup.style.display = 'block';
+            setTimeout(() => { popup.style.opacity = '1'; }, 100);
+        }, 10000); // 5000ms = 5 seconds
+    })();
+
+    function submitRating(n) {
+    if (typeof gtag === 'function') {
+        gtag('event', 'user_feedback', { 'rating': n, 'ver': '2.0' });
+    }
+    
+    localStorage.setItem('tool_rated_v2', 'true');
+
+    // 1. Hide the stars immediately so the user knows the click worked
+    const starContainer = document.querySelector('#rating-popup div');
+    if(starContainer) starContainer.style.display = 'none';
+
+    // 2. Show the "Success" message
+    document.getElementById('rate-ok').style.display = 'block';
+    
+    // 3. Automatic Exit: Wait 1.5s, then fade and hide the whole box
+    setTimeout(() => {
+        const popup = document.getElementById('rating-popup');
+        popup.style.opacity = '0'; 
+        
+        setTimeout(() => {
+            popup.style.display = 'none'; 
+        }, 500); 
+    }, 1500);
+}
+</script>
 </body>
-
 </html>
-
 
 
 
