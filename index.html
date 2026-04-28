@@ -315,6 +315,7 @@ const CONFIG = {
         "GTIN Tickets": { "Approval": 146, "RP": 21, "Count": 560 },
         "SIM Appeals audits": { "Audits": 669.5 },
         "GTIN Update": { "Audits": 600 },
+        "Supp-Prechecks": { "BAKS signal": 18, "Flavor": 18, "Size": 24, "Color": 24, "Item_Name": 30, "Brand": 24, "GCORID/ Stamping Issue": 18, "Product Type": 12 },
         "BAKS": { "Tasks": 900 }
     },
     verif: {
@@ -400,10 +401,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-04-08T23:59:59').getTime();
+    const expiry = new Date('2026-04-30T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}  Explore the new updates 🍾`;
+        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}  Suppression Prechecks added📣`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
