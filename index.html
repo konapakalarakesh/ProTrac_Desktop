@@ -458,30 +458,27 @@ function renderCards() {
 }
 
 function calculate() {
-    let earned = 0; const h = state.hours[state.day]; 
-    const ramp = 1; // Defaulted to 1 as multiplier was replaced by text area
-
-    h.n = Math.min(480, Math.max(0, parseInt(h.n) || 0));
-
+    let earned = 0; 
+    const h = state.hours[state.day]; 
+    const shiftHours = parseFloat(h.s) || 8;
+    
+    // Sum raw points
     state.active[state.day].forEach(k => { 
         const conf = CONFIG.audits[k] || CONFIG.verif[k]; 
         Object.entries(conf).forEach(([t, a]) => {
-            const val = parseFloat(state.data[state.day][k+'_'+t]) || 0;
-            earned += val * a;
+            earned += (parseInt(state.data[state.day][k+'_'+t]) || 0) * a;
         }); 
-    });
+    }); 
 
-    const shiftMins = (parseFloat(h.s) || 8) * 60;
-    const baseProd = shiftMins > 0 ? (h.n / shiftMins) * 100 : 0;
-    const earnedHours = earned / 3600;
-    const outputProd = (parseFloat(h.s) || 8) > 0 ? (earnedHours / h.s) * 100 : 0;
+    // Net Efficiency Logic: (Earned Hours / Net Shift Hours)
+    const nphHours = (parseInt(h.n) || 0) / 60;
+    const effHours = Math.max(0, shiftHours - nphHours);
+    const prod = effHours > 0 ? Math.round(((earned / 3600) / effHours) * 100) : 0;
 
-    const prod = Math.round(baseProd + outputProd);
     if(prod >= 100 && state.lastProd < 100) playSound('success');
     state.lastProd = prod; 
     updateUI(prod, 'prod-out', 'caption-out', 'prod-emoji', 'magic-box');
 }
-
 function updateUI(prod, outId, capId, emoId, boxId) {
     const out = document.getElementById(outId); const cap = document.getElementById(capId);
     const emo = document.getElementById(emoId); const box = document.getElementById(boxId);
@@ -498,26 +495,41 @@ function updateUI(prod, outId, capId, emoId, boxId) {
 function renderSummary() {
     const body = document.getElementById('sum-body');
     document.getElementById('st-head').innerHTML = `<tr><th>PROCESS DETAIL</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th style="color:var(--amz)">TOTAL</th></tr>`;
-    body.innerHTML = ''; const tasks = new Set(); 
-    let wE = 0; let totalNph = 0;
+    body.innerHTML = ''; 
+    const tasks = new Set(); 
+    let wE = 0, totalNetHours = 0, totalNph = 0;
 
+    // 1. Accumulate data and identify all tasks
     ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
         state.active[d].forEach(k => tasks.add(k)); 
-        totalNph += (parseInt(state.hours[d].n) || 0);
+        const h = state.hours[d];
+        totalNph += (parseInt(h.n) || 0);
+        totalNetHours += Math.max(0, (parseFloat(h.s) || 8) - ((parseInt(h.n) || 0) / 60));
+        
         state.active[d].forEach(k => { 
             const conf = CONFIG.audits[k] || CONFIG.verif[k]; 
-            Object.entries(conf).forEach(([t, a]) => wE += (parseFloat(state.data[d][k+'_'+t]) || 0) * a); 
+            Object.entries(conf).forEach(([t, a]) => {
+                const val = parseFloat(state.data[d][k+'_'+t]) || 0;
+                wE += (val * a); 
+            }); 
         });
     });
 
+    // 2. Render the grid details
     tasks.forEach(k => {
-        Object.keys(CONFIG.audits[k] || CONFIG.verif[k]).forEach(t => {
+        const conf = CONFIG.audits[k] || CONFIG.verif[k];
+        Object.keys(conf).forEach(t => {
             let r = `<tr><td><b style="font-size:12px">${k}</b><br><small style="color:var(--slate)">${t}</small></td>`, tot = 0;
-            ['Mon','Tue','Wed','Thu','Fri'].forEach(d => { let v = parseInt(state.data[d][k+'_'+t])||0; r+=`<td>${v||'-'}</td>`; tot+=v; });
+            ['Mon','Tue','Wed','Thu','Fri'].forEach(d => { 
+                let v = parseInt(state.data[d][k+'_'+t]) || 0; 
+                r += `<td>${v || '-'}</td>`; 
+                tot += v; 
+            });
             if(tot > 0) body.innerHTML += r + `<td style="font-weight:900;color:var(--amz);text-align:center;">${tot}</td></tr>`;
         });
     });
-  // ONLY SHOW NPH IF THERE IS DATA
+
+    // 3. NPH Row
     if (totalNph > 0) {
         let nphR = `<tr style="background:rgba(255,153,0,0.05); font-weight:700;"><td>NON-PRODUCTIVE (NPH)</td>`;
         ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
@@ -527,14 +539,10 @@ function renderSummary() {
         body.innerHTML += nphR + `<td style="color:var(--amz); font-weight:900; text-align:center;">${totalNph}m</td></tr>`;
     }
 
-    const totalShiftMins = 5 * 8 * 60;
-    const baseWProd = (totalNph / totalShiftMins) * 100;
-    const outputWProd = ((wE/3600) / 40) * 100;
-    const wProd = Math.round(baseWProd + outputWProd);
-    
+    // 4. Weekly Efficiency Calculation
+    const wProd = totalNetHours > 0 ? Math.round(((wE / 3600) / totalNetHours) * 100) : 0;
     updateUI(wProd, 'week-prod-out', 'week-caption-out', 'week-emoji', 'week-magic-box');
 }
-
 function updateBase() { 
     playSound('tick'); 
     let nInput = document.getElementById('n-in');
