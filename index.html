@@ -161,7 +161,7 @@
 <body>
 
 <div id="update-toast">
-    <span class="toast-emoji">😎</span>
+    <span class="toast-emoji"></span>
     <span id="toast-msg"></span>
 </div>
 
@@ -200,7 +200,7 @@
         <div class="tabs" id="day-tabs"></div>
         <div id="dark-toggle" onclick="toggleDark()" style="cursor:pointer; font-size:20px;">🌓</div>
         <div onclick="logout()" title="Logout & Clear Name" style="cursor:pointer; font-size:18px; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); color:#FCA5A5; transition:0.3s;" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#FCA5A5'">🏃‍♂️</div>
-        <div onclick="showCredits(event)" title="Creator Info" style="cursor:pointer; font-size:14px; opacity:0.4; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); margin-left:10px; color:white;">ⓘ</div>
+        <div onclick="showCredits(event)" title="Compliance & Insights" style="cursor:pointer; font-size:14px; opacity:0.4; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); margin-left:10px; color:white;">ⓘ</div>
     </div>
 </header>
 
@@ -370,18 +370,37 @@ function showCredits(e) {
     if(e) e.stopPropagation(); 
     const p = document.getElementById('crazy-pop');
     const title = document.getElementById('pop-title');
-    const subtext = p.querySelector('p:nth-of-type(1)');
-    const originalTitle = title.innerHTML;
-    const originalSub = subtext.innerHTML;
-    title.innerHTML = `<span style="font-size:16px; color:var(--slate); font-weight:600;">Developed by</span><br><span style="color:var(--amz)">RAKESH KONAPAKALA</span>`;
-    subtext.innerHTML = `Alias: <b>konapaks</b>`;
+    
+    title.innerHTML = `<span style="font-size:18px; color:var(--amz)">TRACKER TERMS & INSIGHTS</span>`;
+    
+    p.querySelector('.pop-content').innerHTML = `
+        <div style="text-align: left; font-size: 13px; line-height: 1.6; color: var(--text);">
+            <ul style="padding-left: 20px;">
+                <li><b>Net Efficiency Model:</b> Productivity is calculated as (Earned Hours) / (Shift - NPH). This ensures fairness by measuring output against <i>actual</i> working time.</li>
+                <li><b>Weekly Aggregate:</b> The weekly percentage is <b>not</b> a simple daily average. It is a true weighted total of all weekly production vs. weekly net hours.</li>
+                <li><b>Performance Integrity:</b> High performance on one day does <b>not</b> offset inactivity on another. Each day is evaluated against its own specific NPH.</li>
+                <li><b>SME Support:</b> If you notice discrepancies in AHT or calculation logic, please capture a screenshot and reach out to your SME for clarification.</li>
+            </ul>
+            <hr style="border:0; border-top:1px solid var(--border); margin: 20px 0;">
+            <div style="text-align: center; font-weight: 700; color: var(--slate);">
+                Developed by Rakesh Konapakala<br>
+                <span style="color: var(--amz);">@konapaks</span>
+            </div>
+        </div>
+    `;
+    
     p.style.display = 'flex';
     playSound('success');
-    setTimeout(() => {
-        p.style.display = 'none';
-        title.innerHTML = originalTitle;
-        subtext.innerHTML = originalSub;
-    }, 4000);
+    
+    p.onclick = () => { 
+        p.style.display = 'none'; 
+        p.querySelector('.pop-content').innerHTML = `
+            <div style="font-size: 60px;">⚡</div>
+            <h1 id="pop-title" style="margin: 10px 0; font-family: 'Montserrat'; color: var(--text);"></h1>
+            <p style="font-weight: 700; color: var(--slate);">CRUSH YOUR TARGETS TODAY!</p>
+            <p style="font-weight: 300; color: var(--slate);">A konapaks creation</p>
+        `;
+    };
 }
 
 const principles = ["Customer Obsession", "Ownership", "Invent and Simplify", "Are Right, A Lot", "Learn and Be Curious", "Hire and Develop the Best", "Insist on the Highest Standards", "Think Big", "Bias for Action", "Frugality", "Earn Trust", "Dive Deep", "Have Backbone; Disagree and Commit", "Deliver Results", "Strive to be Earth’s Best Employer", "Success and Scale Bring Broad Responsibility"];
@@ -401,10 +420,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-05-13T23:59:59').getTime();
+    const expiry = new Date('2026-05-29T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()}  BAKS Multi-Pack Got Included📣`;
+        document.getElementById('toast-msg').innerText = `⚠️ Hey ${state.owner.toUpperCase()}  Tracker reverted to Net Efficiency logic for fairness`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
