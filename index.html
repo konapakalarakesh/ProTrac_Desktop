@@ -631,7 +631,7 @@ function downloadTextReport() {
             });
         });
 
-        const dProd = Math.round(((h.n/480)*100) + (((dayE/3600)/8)*100));
+        const dProd = Math.max(0, (parseFloat(h.s) || 8) - (h.n/60)) > 0 ? Math.round(((dayE/3600) / (parseFloat(h.s) - (h.n/60))) * 100) : 0;
 
         if (dayRows.length > 0) {
             dayRows.forEach((row, index) => {
@@ -648,7 +648,8 @@ function downloadTextReport() {
         totalE += dayE; totalN += parseInt(h.n)||0;
     });
 
-    const wProd = Math.round(((totalN/2400)*100) + (((totalE/3600)/40)*100));
+    const totalShift = 5 * 8; // Adjust if your total shift hours vary
+    const wProd = (totalShift - (totalN/60)) > 0 ? Math.round(((totalE/3600) / (totalShift - (totalN/60))) * 100) : 0;
     csv += `TOTAL WEEKLY AGGREGATE,,,,,,,${wProd}%\n`;
     const BOM = '\uFEFF'; 
     const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
