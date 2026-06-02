@@ -15,17 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
-    @keyframes pulse {
-    0% { transform: scale(1); opacity: 0.4; }
-    50% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.4; }
-}
 
-.pulse-icon {
-    animation: pulse 2s infinite;
-    color: var(--amz) !important; /* Makes it stand out */
-    font-weight: bold;
-}
 /* Initial Load Animation */
 @keyframes magic-load {
     0% { transform: scale(5) rotate(0deg); opacity: 0; }
@@ -343,7 +333,7 @@ const CONFIG = {
         "UPCX Tickets": { "Audits": 424 },
         "GTIN Tickets": { "Approval": 146, "RP": 21, "Count": 560 },
         "SIM Appeals audits": { "Audits": 669.5 },
-        "GTIN Update": { "Audits": 600 },
+        "NON - BLMA": { "Missing information": 50, "No action - Bulk request": 50, "Incorrect CTI": 70, "Duplicate TT": 70, "Already suppressed/updated": 130, "GTINless suppression rejected": 130, "Fastrack not eligible": 190, "BAKs Positive signal": 250, "Image validation fail": 850, "Suppression successful": 1160, "GTIN update rejected": 130, "Requested proof": 430, "GTIN updated": 786  },
         "Supp-Prechecks": { "BAKS signal": 18, "Flavor": 18, "Size": 24, "Color": 24, "Item_Name": 30, "Brand": 24, "GCORID/ Stamping Issue": 18, "Product Type": 12 },
         "BAKS": { "Tasks": 658.8, "Multi-Pack": 600 }
     },
