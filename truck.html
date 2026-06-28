@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html><head><style id="qw-theme">:root {
+  --color-bg: #faf9fc;
+  --color-text: #131920;
+  --color-navbar-bg: #f9f9fb;
+  --color-bg-chat-view: #fcfcfd;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #f9fafb;
+  --color-bg-hover: #f3f4f6;
+  --color-surface: #f9fafb;
+  --color-surface-hover: #f3f4f6;
+  --color-surface-active: #e5e7eb;
+  --color-border: rgba(0, 0, 0, .12);
+  --color-border-light: rgba(0, 0, 0, .06);
+  --color-border-strong: #d1d5db;
+  --color-primary: #4200db;
+  --color-primary-dark: #35009e;
+  --color-primary-light: #8575ff;
+  --color-primary-bg: #e8e6ff;
+  --color-primary-hover-border: #35009e;
+  --color-nav-icon-active: #4200db;
+  --color-nav-hover-border: #4200db;
+  --color-primary-alpha-3: color-mix(in srgb, #4200db 3%, transparent);
+  --color-primary-alpha-5: color-mix(in srgb, #4200db 5%, transparent);
+  --color-primary-alpha-8: color-mix(in srgb, #4200db 8%, transparent);
+  --color-primary-alpha-12: color-mix(in srgb, #4200db 12%, transparent);
+  --color-primary-alpha-15: color-mix(in srgb, #4200db 15%, transparent);
+  --color-primary-alpha-20: color-mix(in srgb, #4200db 20%, transparent);
+  --color-primary-alpha-25: color-mix(in srgb, #4200db 25%, transparent);
+  --color-primary-alpha-30: color-mix(in srgb, #4200db 30%, transparent);
+  --color-primary-alpha-40: color-mix(in srgb, #4200db 40%, transparent);
+  --color-primary-alpha-50: color-mix(in srgb, #4200db 50%, transparent);
+  --color-primary-alpha-60: color-mix(in srgb, #4200db 60%, transparent);
+  --color-primary-subtle: color-mix(in srgb, #4200db 12%, transparent);
+  --color-primary-border: color-mix(in srgb, #4200db 30%, transparent);
+  --color-focus-ring: color-mix(in srgb, #4200db 50%, transparent);
+  --color-sidebar-hover: color-mix(in srgb, #4200db 12%, transparent);
+  --color-accent: #4200db;
+  --color-accent-foreground: #4200db;
+  --color-accent-dark: #35009e;
+  --color-accent-light: #e8e6ff;
+  --color-accent-inverse: #ffffff;
+  --color-link: #4200db;
+  --color-primary-gradient-end: #e8e6ff;
+  --color-primary-bg-solid: #e8e6ff;
+  --color-user-bubble: #F3F3F7;
+  --color-user-bubble-text: #131920;
+  --color-text-secondary: #5e5e5e;
+  --color-text-tertiary: #656871;
+  --color-text-muted: #9ca3af;
+  --color-text-on-primary: #ffffff;
+  --color-success: #00802f;
+  --color-success-dark: #00471e;
+  --color-success-light: #d9ffd6;
+  --color-success-hover: #005c26;
+  --color-success-bg: #e6f5eb;
+  --color-success-border: #b3d9bf;
+  --color-success-foreground: #00802f;
+  --color-success-dark-foreground: #00471e;
+  --color-success-text: #00471e;
+  --color-error: #db0000;
+  --color-error-dark: #700000;
+  --color-error-light: #ffe0e0;
+  --color-error-hover: #ffe0e0;
+  --color-error-bg: #fceaea;
+  --color-error-border: #f2cccc;
+  --color-error-active-border: #db0000;
+  --color-error-foreground: #db0000;
+  --color-error-dark-foreground: #700000;
+  --color-error-inverse: #ffffff;
+  --color-error-text: #700000;
+  --color-warning: #f2b100;
+  --color-warning-dark: #573a00;
+  --color-warning-light: #fffbbd;
+  --color-warning-hover: #db9200;
+  --color-warning-bg: #fef7e6;
+  --color-warning-border: #f9dfa3;
+  --color-warning-foreground: #f2b100;
+  --color-warning-dark-foreground: #573a00;
+  --color-warning-inverse: #573a00;
+  --color-surface-warning: #fffbbd;
+  --color-text-warning: #573a00;
+  --color-info: #006ce0;
+  --color-info-dark: #002a66;
+  --color-info-light: #d1f1ff;
+  --color-info-hover: #003b8f;
+  --color-info-bg: #ebf3fc;
+  --color-info-border: #b3d1f0;
+  --color-info-foreground: #006ce0;
+  --color-info-dark-foreground: #002a66;
+  --color-info-inverse: #ffffff;
+  --color-overlay: rgba(0, 0, 0, .5);
+  --color-shadow: rgba(0, 0, 0, .08);
+  --color-hover: rgba(0, 0, 0, .05);
+  --color-tooltip-bg: rgba(0, 0, 0, .85);
+  --color-tooltip-text: #ffffff;
+  --color-voice-purple: #8575ff;
+  --color-voice-purple-dark: #4200db;
+  --color-voice-purple-light: #8575ff;
+  --color-voice-red: #db0000;
+  --color-voice-red-dark: #700000;
+  --color-voice-amber: #f2b100;
+  --color-voice-purple-glow: rgba(66, 0, 219, .4);
+  --color-voice-red-glow: rgba(219, 0, 0, .4);
+  --font-sans: "Amazon Ember", "Helvetica Neue", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "Monaco", "Menlo", "Consolas", monospace;
+  --text-2xs: .5625rem;
+  --text-xs: .625rem;
+  --text-sm: .6875rem;
+  --text-base: .75rem;
+  --text-md: .8125rem;
+  --text-lg: .875rem;
+  --text-xl: 1rem;
+  --text-2xl: 1.125rem;
+  --text-3xl: 1.25rem;
+  --text-4xl: 1.5rem;
+  --text-5xl: 2rem;
+  --spacing-1: calc(.25rem * 1);
+  --spacing-1-5: calc(.25rem * 1.5);
+  --spacing-2: calc(.25rem * 2);
+  --spacing-3: calc(.25rem * 3);
+  --spacing-4: calc(.25rem * 4);
+  --spacing-5: calc(.25rem * 5);
+  --spacing-6: calc(.25rem * 6);
+  --spacing-7: calc(.25rem * 7);
+  --spacing-8: calc(.25rem * 8);
+  --spacing-9: calc(.25rem * 9);
+  --spacing-10: calc(.25rem * 10);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-card: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 8px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+  --color-success-bg-solid: #d9ffd6;
+  --color-error-bg-solid: #ffe0e0;
+  --color-error-border-solid: #ffe0e0;
+  --color-warning-bg-solid: #fffbbd;
+  --color-warning-text: #573a00;
+  --color-info-bg-solid: #d1f1ff;
+  --color-info-bg-solid-alt: #d1f1ff;
+  --color-info-text: #002a66;
+  --color-info-text-alt: #002a66;
+  --color-emerald: #10b981;
+  --color-teal: #4ecdc4;
+  --color-code-bg: #F3F3F7;
+  --color-code-header-bg: #f1f3f5;
+  --color-code-text: #24292e;
+  --color-code-border: #e1e4e8;
+  --color-code-muted: #6a737d;
+  --color-inline-code-bg: #F3F3F7;
+  --color-inline-code-text: #24292e;
+  --color-inline-code-border: #e1e4e8;
+  --color-scrollbar-thumb: #d1d5db;
+  --color-scrollbar-track: transparent;
+  --color-graph-node-text: #333333;
+  --color-graph-node-text-dim: #7F8C8D;
+  --color-graph-edge-default: #95A5A6;
+  --color-graph-edge-cross: #E67E22;
+  --color-graph-edge-text: #666666;
+  --color-graph-edge-stroke: #ffffff;
+  --color-graph-highlight-bg: #FF6B6B;
+  --color-graph-highlight-border: #E74C3C;
+  --color-graph-search-bg: #FFD700;
+  --color-graph-search-border: #FFA500;
+  --color-graph-focus-border: #C0392B;
+  --color-graph-external-border: #95A5A6;
+  --color-graph-cat-file: #3498DB;
+  --color-graph-cat-folder: #7F8C8D;
+  --color-graph-cat-file-aggregate: #2980B9;
+  --color-graph-cat-class: #9B59B6;
+  --color-graph-cat-function: #2ECC71;
+  --color-graph-cat-method: #1ABC9C;
+  --color-graph-cat-variable: #F39C12;
+  --color-graph-cat-import: #D35400;
+  --color-graph-cat-module: #5B6ABF;
+  --color-graph-cat-concept: #E74C3C;
+  --color-graph-cat-person: #FF6B6B;
+  --color-graph-cat-org: #4ECDC4;
+  --color-graph-cat-organization: #4ECDC4;
+  --color-graph-cat-product: #A29BFE;
+  --color-graph-cat-metric: #FD79A8;
+  --color-graph-cat-location: #34495E;
+  --color-graph-cat-date: #E056A0;
+  --color-graph-cat-code: #3498DB;
+  --color-graph-cat-doc: #7F8C8D;
+  --color-graph-cat-url: #00B894;
+  --color-graph-cat-email: #6C5CE7;
+  --color-graph-cat-unknown: #BDC3C7;
+  --color-graph-rel-contains: #BDC3C7;
+  --color-graph-rel-extends: #9B59B6;
+  --color-graph-rel-implements: #3498DB;
+  --color-graph-rel-imports: #E67E22;
+  --color-graph-rel-uses: #2ECC71;
+  --color-graph-rel-calls: #27AE60;
+  --color-graph-rel-references: #F39C12;
+  --color-graph-rel-related-to: #95A5A6;
+  --color-graph-rel-works-on: #E74C3C;
+  --color-graph-rel-owns: #1ABC9C;
+  --color-graph-rel-depends-on: #E67E22;
+  --color-graph-rel-parent-of: #BDC3C7;
+  --qs-content: #fff;
+  --qs-main: #fff;
+  --qs-primary-foreground: #131920;
+  --qs-secondary-foreground: #656871;
+  --qs-tertiary-foreground: #9ca3af;
+  --qs-placeholder-foreground: #8c8c94;
+  --qs-divider: #dedee3;
+  --qs-default-border: #8c8c94;
+  --qs-neutral-soft: #b4b4bb;
+  --qs-neutral-gray-50: #f9fafb;
+  --qs-tertiary-background: #f9fafb;
+  --qs-action-hover: #f3f3f7;
+  --qs-primary-default: #4200db;
+  --qs-primary-dark: #35009e;
+  --qs-primary-light: #e8e6ff;
+  --qs-success-default: #00802f;
+  --qs-error-default: #db0000;
+  --qs-font-sans: "Amazon Ember", "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;
+  --qs-font-family: "Amazon Ember", "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;
+  --qs-font-base-letter-spacing: .15px;
+  --qs-shadow-sm: 0 0 2px 0 #00000029, 0 0 4px 0 #00000029;
+  --qs-shadow-md: 0 0 2px 0 #00000029, 0 2px 8px 1px #00000029;
+  --qs-shadow-lg: 0 4px 16px 4px #00000029, 0 2px 6px 1px #00000029;
+  --qs-shadow-xl: 0 4px 8px 2px #00000029, 0 6px 20px 4px #00000029;
+  --qs-width-modal-sm: 384px;
+  --qs-width-modal-md: 600px;
+  --qs-width-modal-lg: 1136px;
+  --qs-grid-gap: 16px;
+  --qs-grid-gap-xl: 24px;
+  --qs-primary-medium: #8575ff;
+  --qs-primary-inverse: #fff;
+  --qs-neutral-lightest: #f9f9fb;
+  --qs-neutral-light: #f3f3f7;
+  --qs-neutral-default: #dedee3;
+  --qs-neutral-medium: #8c8c94;
+  --qs-neutral-deep: #656871;
+  --qs-neutral-dark: #333843;
+  --qs-neutral-strong: #131920;
+  --qs-neutral-white: #fff;
+  --qs-neutral-black: #000;
+  --qs-success-medium: #005c26;
+  --qs-success-dark: #00471e;
+  --qs-success-light: #d9ffd6;
+  --qs-success-inverse: #fff;
+  --qs-info-default: #006ce0;
+  --qs-info-medium: #003b8f;
+  --qs-info-dark: #002a66;
+  --qs-info-light: #d1f1ff;
+  --qs-info-inverse: #fff;
+  --qs-warning-default: #f2b100;
+  --qs-warning-medium: #db9200;
+  --qs-warning-dark: #573a00;
+  --qs-warning-light: #fffbbd;
+  --qs-warning-inverse: #573a00;
+  --qs-warning-experimental: #f2b100;
+  --qs-warning-experimental-light: #fffbbd;
+  --qs-warning-experimental-light-foreground: #fffbbd;
+  --qs-error-medium: #900;
+  --qs-error-dark: #700000;
+  --qs-error-light: #ffe0e0;
+  --qs-error-inverse: #fff;
+  --qs-connection-default: #db3300;
+  --qs-connection-soft: #ff997a;
+  --qs-connection-light: #ffe0d6;
+  --qs-connection-dark: #661800;
+  --qs-automation-default: #b3008f;
+  --qs-automation-medium: #d600ba;
+  --qs-automation-soft: #ff94f1;
+  --qs-automation-light: #ffe0fb;
+  --qs-automation-dark: #660052;
+  --qs-insight-default: #a000b8;
+  --qs-insight-soft: #f299ff;
+  --qs-insight-light: #fce6ff;
+  --qs-insight-dark: #590066;
+  --qs-visualization-default: #7300e5;
+  --qs-visualization-soft: #d4a8ff;
+  --qs-visualization-light: #f2e5ff;
+  --qs-visualization-dark: #45008a;
+  --qs-spice: #ff9800;
+  --qs-coachmark: #006ce0;
+  --qs-brand: #fff;
+  --qs-brand-foreground: #131920;
+  --qs-brand-navbar: #131920;
+  --qs-brand-navbar-foreground: #fff;
+  --qs-brand-navbar-light: #dedee3;
+  --qs-brand-navbar-dark: #000;
+  --qs-application-navbar: #4200db;
+  --qs-application-navbar-foreground: #fff;
+  --qs-application-navbar-light: #e8e6ff;
+  --qs-application-navbar-dark: #35009e;
+  --qs-dimension: #4200db;
+  --qs-dimension-foreground: #fff;
+  --qs-dimension-experimental: #4200db;
+  --qs-dimension-experimental-foreground: #4200db;
+  --qs-measure: #00802f;
+  --qs-measure-foreground: #fff;
+  --qs-measure-experimental: #f2b100;
+  --qs-measure-experimental-foreground: #f2b100;
+  --qs-content-inverse: #333843;
+  --qs-content-inverse-active: #131920;
+  --qs-secondary: #dedee3;
+  --qs-disabled: #8c8c94;
+  --qs-divider-light: #f3f3f7;
+  --qs-hover-border: #333843;
+  --qs-active-border: #4200db;
+  --qs-disabled-border: #dedee3;
+  --qs-error-border: #ffe0e0;
+  --qs-error-active-border: #db0000;
+  --qs-disabled-foreground: #b4b4bb;
+  --qs-primary-inverse-foreground: #fff;
+  --qs-error-foreground: #db0000;
+  --qs-contrast-foreground: #131920;
+  --qs-main-foreground: #131920;
+  --qs-main-secondary-foreground: #656871;
+  --qs-action-disabled: #f3f3f7;
+  --qs-action-active: #e8e6ff;
+  --qs-default-badge: #dedee3;
+  --qs-tag-default: #dedee3;
+  --qs-tag-soft-border: #b4b4bb;
+  --qs-focus-offset: 1px;
+  --qs-toggle-tile-sm: calc(.25rem * 8);
+  --qs-toggle-tile-md: calc(.25rem * 12);
+  --qs-toggle-tile-lg: calc(.25rem * 15);
+  --qs-shadow-pin-right: inset 4px 0 4px -4px #00000029;
+  --qs-shadow-pin-left: inset -4px 0 4px -4px #00000029;
+  --react-pdf-text-layer: 1;
+  --highlight-bg-color: rgba(180, 0, 170, 1);
+  --highlight-selected-bg-color: rgba(0, 100, 0, 1);
+  --react-pdf-annotation-layer: 1;
+  --annotation-unfocused-field-background: url("data:image/svg+xml;charset=UTF-8,<svg width='1px' height='1px' xmlns='http://www.w3.org/2000/svg'><rect width='100%' height='100%' style='fill:rgba(0, 54, 255, 0.13);'/></svg>");
+  --input-focus-border-color: Highlight;
+  --input-focus-outline: 1px solid Canvas;
+  --input-unfocused-border-color: transparent;
+  --input-disabled-border-color: transparent;
+  --input-hover-border-color: black;
+  --link-outline: none;
+  color-scheme: light;
+}
+body { background: var(--color-bg); color: var(--color-text); }
+a { color: var(--color-link, var(--color-primary)); }</style><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:transparent;font-family:'Segoe UI',sans-serif;overflow:hidden;height:100vh;display:flex;align-items:flex-end}
+.scene{position:relative;width:100%;height:105px;transition:opacity .4s}
+.scene.off{opacity:0;pointer-events:none}
+
+.caption-container{position:absolute;top:24px;left:0;width:100%;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:30}
+.caption{font-size:10px;font-weight:700;letter-spacing:.3px;opacity:0;white-space:nowrap;padding:5px 14px;border-radius:14px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.caption.show{animation:captionReveal 4s ease forwards}
+@keyframes captionReveal{0%{opacity:0;transform:scale(.88) translateY(4px)}12%{opacity:1;transform:scale(1) translateY(0)}78%{opacity:1;transform:scale(1) translateY(0)}100%{opacity:0;transform:scale(.95) translateY(-3px)}}
+
+.pct{position:absolute;top:5px;right:3%;font-size:10px;font-weight:900;color:#FF9900;opacity:.8;font-variant-numeric:tabular-nums;z-index:20}
+
+.road-container{position:absolute;bottom:12px;left:1.5%;width:97%;height:7px}
+.road{position:absolute;inset:0;background:linear-gradient(180deg,rgba(90,90,90,.12),rgba(60,60,60,.18),rgba(90,90,90,.12));border-radius:3px}
+.road::before{content:'';position:absolute;top:3px;left:3%;width:94%;height:1px;background:repeating-linear-gradient(90deg,rgba(200,170,40,.35) 0 8px,transparent 8px 20px)}
+.road-lines{position:absolute;top:3px;left:0;width:200%;height:1px;background:repeating-linear-gradient(90deg,transparent 0 12px,rgba(255,255,255,.04) 12px 14px);opacity:0;transition:opacity .5s}
+.road-lines.active{opacity:1;animation:roadScroll 2s linear infinite}
+@keyframes roadScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.mark-start{position:absolute;left:1%;bottom:20px;font-size:10px;opacity:.7}
+.mark-end{position:absolute;right:1%;bottom:20px;font-size:10px;opacity:.25;transition:all .8s}
+.mark-end.on{opacity:1;animation:endPop 1.2s ease-in-out infinite alternate}
+@keyframes endPop{0%{transform:scale(1)}100%{transform:scale(1.15)}}
+
+.milestones{position:absolute;bottom:11px;left:1.5%;width:97%;height:10px;pointer-events:none}
+.milestone-dot{position:absolute;bottom:2px;width:3px;height:3px;border-radius:50%;background:rgba(255,153,0,.15);transition:all .6s}
+.milestone-dot.passed{background:rgba(255,153,0,.65);box-shadow:0 0 5px rgba(255,153,0,.3);transform:scale(1.5)}
+
+.finish{position:absolute;right:1%;bottom:10px;width:16px;height:16px;opacity:.2;transition:all .8s}
+.finish.on{opacity:1;filter:drop-shadow(0 0 8px rgba(255,153,0,.6));animation:finishGlow 2s ease-in-out infinite alternate}
+@keyframes finishGlow{0%{transform:scale(1)}100%{transform:scale(1.1)}}
+
+/* Vehicle */
+.vehicle{position:absolute;bottom:7px;left:1.5%;z-index:10;transform-origin:center bottom}
+.vehicle.instant{transition:none}
+.vehicle.smooth{transition:left 2.8s cubic-bezier(.16,.66,.38,1)}
+.vehicle.idle{animation:idlePulse 3s ease-in-out infinite}
+.vehicle.starting{animation:startup 1.1s ease-out}
+.vehicle.moving{animation:cruise .5s ease-in-out infinite alternate}
+.vehicle.braking{animation:brakeDip .6s cubic-bezier(.2,.8,.3,1.1) forwards}
+.vehicle.stopping{animation:frontDip .7s cubic-bezier(.2,.9,.3,1.15) forwards}
+.vehicle.rough{animation:roughRoad .15s linear infinite}
+
+/* Idle — micro engine vibration */
+@keyframes idlePulse{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-.2px) rotate(.02deg)}50%{transform:translateY(-.4px) rotate(-.02deg)}75%{transform:translateY(-.1px) rotate(.01deg)}}
+
+@keyframes startup{0%{transform:translateX(0) rotate(0)}8%{transform:translateX(-2px) rotate(-.5deg)}20%{transform:translateX(1.5px) rotate(.3deg)}35%{transform:translateX(-1px) rotate(-.15deg)}50%{transform:translateX(3px) rotate(.25deg)}70%{transform:translateX(.5px) rotate(.05deg)}100%{transform:translateX(0) rotate(0)}}
+
+@keyframes cruise{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(1px,-.5px) rotate(.1deg)}}
+
+/* BRAKE DIP — nose dips, body compresses, then bounces back */
+@keyframes brakeDip{
+  0%{transform:translateY(0) rotate(0) scaleY(1)}
+  20%{transform:translateY(2.5px) rotate(-1.2deg) scaleY(.97)}
+  35%{transform:translateY(3px) rotate(-1.5deg) scaleY(.96)}
+  55%{transform:translateY(1px) rotate(-.3deg) scaleY(.99)}
+  70%{transform:translateY(-1.5px) rotate(.4deg) scaleY(1.01)}
+  85%{transform:translateY(-.5px) rotate(.1deg) scaleY(1)}
+  100%{transform:translateY(0) rotate(0) scaleY(1)}
+}
+
+/* FRONT STOP DIP — forward momentum, nose tips down hard, front tires press */
+@keyframes frontDip{
+  0%{transform:translateX(0) translateY(0) rotate(0) scaleY(1)}
+  25%{transform:translateX(3px) translateY(1.5px) rotate(1.5deg) scaleY(.97)}
+  40%{transform:translateX(4px) translateY(2.5px) rotate(2deg) scaleY(.95)}
+  60%{transform:translateX(1px) translateY(-.5px) rotate(.3deg) scaleY(1)}
+  80%{transform:translateX(-1px) translateY(-1px) rotate(-.3deg) scaleY(1.01)}
+  100%{transform:translateY(0) rotate(0) scaleY(1)}
+}
+
+@keyframes roughRoad{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(.5px,-1px) rotate(.15deg)}50%{transform:translate(-.3px,.5px) rotate(-.1deg)}75%{transform:translate(.8px,-.8px) rotate(.2deg)}100%{transform:translate(0,0) rotate(0)}}
+
+/* Smoke */
+.smoke{position:absolute;left:-8px;bottom:6px;pointer-events:none}
+.smoke i{position:absolute;display:block;border-radius:50%;background:radial-gradient(circle,rgba(130,135,145,.5),rgba(90,95,105,.06));opacity:0}
+.vehicle.moving .smoke i,.vehicle.rough .smoke i{animation:smokeRise 1.1s ease-out infinite}
+.vehicle.starting .smoke i{animation:startSmoke .9s ease-out forwards}
+.vehicle.moving .smoke i:nth-child(1){width:12px;height:12px}
+.vehicle.moving .smoke i:nth-child(2){width:20px;height:20px;animation-delay:.1s;left:-3px;bottom:1px}
+.vehicle.moving .smoke i:nth-child(3){width:10px;height:10px;animation-delay:.2s;left:3px;bottom:3px}
+.vehicle.moving .smoke i:nth-child(4){width:24px;height:24px;animation-delay:.32s;left:-7px;bottom:-1px}
+.vehicle.moving .smoke i:nth-child(5){width:14px;height:14px;animation-delay:.45s;left:1px;bottom:2px}
+.vehicle.moving .smoke i:nth-child(6){width:22px;height:22px;animation-delay:.58s;left:-5px;bottom:0}
+.vehicle.moving .smoke i:nth-child(7){width:16px;height:16px;animation-delay:.7s;left:2px;bottom:3px}
+.vehicle.moving .smoke i:nth-child(8){width:26px;height:26px;animation-delay:.82s;left:-8px;bottom:-2px}
+.vehicle.starting .smoke i:nth-child(1){width:24px;height:24px}
+.vehicle.starting .smoke i:nth-child(2){width:32px;height:32px;animation-delay:.04s}
+.vehicle.starting .smoke i:nth-child(3){width:26px;height:26px;animation-delay:.08s}
+.vehicle.starting .smoke i:nth-child(4){width:34px;height:34px;animation-delay:.12s}
+.vehicle.starting .smoke i:nth-child(5){width:28px;height:28px;animation-delay:.16s}
+@keyframes smokeRise{0%{opacity:.55;transform:translate(0,0) scale(.3)}20%{opacity:.4;transform:translate(-7px,-8px) scale(.55)}45%{opacity:.25;transform:translate(-14px,-16px) scale(.8)}100%{opacity:0;transform:translate(-28px,-28px) scale(1.4)}}
+@keyframes startSmoke{0%{opacity:.8;transform:translate(0,0) scale(.5)}35%{opacity:.5;transform:translate(-10px,-8px) scale(1)}100%{opacity:0;transform:translate(-24px,-20px) scale(1.8)}}
+
+/* Headlight */
+.headlight{position:absolute;right:-4px;top:40%;width:20px;height:6px;background:radial-gradient(ellipse at left,rgba(255,180,50,.35),transparent);border-radius:50%;opacity:0;transition:opacity .6s}
+.vehicle.moving .headlight,.vehicle.starting .headlight,.vehicle.rough .headlight{opacity:1}
+
+/* Brake glow + tire heat */
+.brake-glow{position:absolute;left:-2px;bottom:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .15s}
+.vehicle.braking .brake-glow,.vehicle.stopping .brake-glow{opacity:1}
+.brake-glow .rear-light{position:absolute;left:0;top:36%;width:7px;height:6px;background:radial-gradient(circle,rgba(255,50,10,.9),rgba(255,50,10,.2),transparent);border-radius:50%}
+.brake-glow .tire-heat-1{position:absolute;left:8px;bottom:2px;width:18px;height:8px;background:radial-gradient(ellipse,rgba(255,80,20,.5),transparent);border-radius:50%}
+.brake-glow .tire-heat-2{position:absolute;right:12px;bottom:2px;width:18px;height:8px;background:radial-gradient(ellipse,rgba(255,80,20,.5),transparent);border-radius:50%}
+
+/* Brake skid marks */
+.brake-skid{position:absolute;left:0;bottom:-3px;pointer-events:none;opacity:0;transition:opacity .2s}
+.vehicle.braking .brake-skid,.vehicle.stopping .brake-skid{opacity:1}
+.brake-skid i{position:absolute;height:2px;background:linear-gradient(90deg,rgba(60,40,20,.3),rgba(60,40,20,.1));border-radius:1px;animation:skidGrow .4s ease-out forwards}
+.brake-skid i:nth-child(1){width:0;bottom:0;left:10px}
+.brake-skid i:nth-child(2){width:0;bottom:0;left:52px;animation-delay:.05s}
+@keyframes skidGrow{0%{width:0;opacity:0}100%{width:14px;opacity:1}}
+
+/* Exhaust backfire flash */
+.backfire{position:absolute;left:-6px;bottom:10px;width:8px;height:8px;background:radial-gradient(circle,rgba(255,153,0,.8),rgba(255,100,0,.3),transparent);border-radius:50%;opacity:0;pointer-events:none}
+.backfire.flash{animation:backfireFlash .2s ease-out forwards}
+@keyframes backfireFlash{0%{opacity:1;transform:scale(.5)}50%{opacity:.8;transform:scale(1.2)}100%{opacity:0;transform:scale(.8)}}
+
+/* Road reflection (subtle depth) */
+.reflection{position:absolute;bottom:-6px;left:0;width:100%;height:12px;transform:scaleY(-1);opacity:.03;pointer-events:none;filter:blur(1px)}
+
+/* Dust */
+.dust{position:absolute;left:-12px;bottom:0;pointer-events:none;opacity:0;transition:opacity .4s}
+.vehicle.moving .dust,.vehicle.rough .dust,.vehicle.braking .dust{opacity:1}
+.dust i{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(180,140,60,.2);animation:dustKick .9s ease-out infinite}
+.dust i:nth-child(1){animation-delay:0s}
+.dust i:nth-child(2){animation-delay:.12s;left:-3px;bottom:1px}
+.dust i:nth-child(3){animation-delay:.25s;left:1px;bottom:-1px}
+.dust i:nth-child(4){animation-delay:.4s;left:-5px;bottom:2px}
+@keyframes dustKick{0%{opacity:.5;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(-14px,5px) scale(2.2)}}
+
+/* Tire sparks */
+.tire-sparks{position:absolute;left:-4px;bottom:0;pointer-events:none;opacity:0}
+.vehicle.rough .tire-sparks{opacity:1}
+.tire-sparks i{position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(255,153,0,.5);animation:spark .4s ease-out infinite}
+.tire-sparks i:nth-child(1){animation-delay:0s}
+.tire-sparks i:nth-child(2){animation-delay:.1s;left:3px}
+.tire-sparks i:nth-child(3){animation-delay:.2s;left:-2px;bottom:1px}
+@keyframes spark{0%{opacity:.7;transform:translate(0,0)}100%{opacity:0;transform:translate(-8px,3px)}}
+
+/* Speed lines — intensify at 90%+ */
+.speed-lines{position:absolute;bottom:14px;left:0;width:100%;height:8px;pointer-events:none;opacity:0;transition:opacity .5s}
+.speed-lines.active{opacity:1}
+.speed-lines.intense .speed-line{height:1px;opacity:.8}
+.speed-line{position:absolute;height:.7px;background:linear-gradient(90deg,transparent,rgba(255,153,0,.15),transparent);animation:speedDash 1s linear infinite}
+.speed-line:nth-child(1){top:1px;left:5%;width:22px}
+.speed-line:nth-child(2){top:4px;left:2%;width:14px;animation-delay:.25s}
+.speed-line:nth-child(3){top:6px;left:8%;width:18px;animation-delay:.5s}
+.speed-line:nth-child(4){top:2px;left:12%;width:26px;animation-delay:.7s;display:none}
+.speed-lines.intense .speed-line:nth-child(4){display:block}
+@keyframes speedDash{0%{opacity:0;transform:translateX(20px)}25%{opacity:.5}100%{opacity:0;transform:translateX(-18px)}}
+
+/* Wheel spin animation */
+.wheel-spin{animation:none}
+.vehicle.moving .wheel-spin,.vehicle.rough .wheel-spin,.vehicle.braking .wheel-spin{animation:wheelRotate 1s linear infinite}
+.vehicle.rough .wheel-spin{animation-duration:.5s}
+@keyframes wheelRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style></head>
+<body>
+<div class="scene" id="scene">
+  <span class="pct" id="pct">0%</span>
+  <span class="mark-start">🚀</span>
+  <span class="mark-end" id="markEnd">🏁</span>
+  <div class="road-container"><div class="road"></div><div class="road-lines" id="roadLines"></div></div>
+  <div class="milestones">
+    <div class="milestone-dot" style="left:25%"></div>
+    <div class="milestone-dot" style="left:50%"></div>
+    <div class="milestone-dot" style="left:75%"></div>
+    <div class="milestone-dot" style="left:99%"></div>
+  </div>
+  <div class="caption-container" id="captionContainer"></div>
+  <div class="speed-lines" id="speedLines"><div class="speed-line"></div><div class="speed-line"></div><div class="speed-line"></div><div class="speed-line"></div></div>
+  <div class="finish" id="finish">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#FF9900" stroke-width="1.5" opacity=".7"></circle><circle cx="12" cy="12" r="6" stroke="#FF9900" stroke-width="1" opacity=".45"></circle><circle cx="12" cy="12" r="2.5" fill="#FF9900" opacity=".6"></circle><line x1="12" y1="2" x2="12" y2="6" stroke="#FF9900" stroke-width="1" opacity=".4"></line><line x1="12" y1="18" x2="12" y2="22" stroke="#FF9900" stroke-width="1" opacity=".4"></line><line x1="2" y1="12" x2="6" y2="12" stroke="#FF9900" stroke-width="1" opacity=".4"></line><line x1="18" y1="12" x2="22" y2="12" stroke="#FF9900" stroke-width="1" opacity=".4"></line></svg>
+  </div>
+
+  <!-- TRUCK -->
+  <div class="vehicle idle smooth" id="vehicle">
+    <div class="smoke"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="headlight"></div>
+    <div class="backfire" id="backfire"></div>
+    <div class="brake-glow"><div class="rear-light"></div><div class="tire-heat-1"></div><div class="tire-heat-2"></div></div>
+    <div class="brake-skid"><i></i><i></i></div>
+    <div class="dust"><i></i><i></i><i></i><i></i></div>
+    <div class="tire-sparks"><i></i><i></i><i></i></div>
+
+    <svg width="76" height="48" viewBox="0 0 82 52" fill="none">
+      <defs><linearGradient id="bG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF9900"></stop><stop offset="100%" stop-color="#cc6600"></stop></linearGradient><linearGradient id="tG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF9900"></stop><stop offset="100%" stop-color="#994400"></stop></linearGradient></defs>
+      <!-- Cargo -->
+      <rect x="2" y="5" width="40" height="24" rx="3" stroke="url(#bG)" stroke-width="2.5" fill="rgba(255,153,0,.04)"></rect>
+      <path d="M2 29h40" stroke="#994400" stroke-width="1" opacity=".3"></path><path d="M42 9v20" stroke="#994400" stroke-width=".8" opacity=".2"></path>
+      <line x1="12" y1="8" x2="12" y2="27" stroke="#FF9900" stroke-width=".6" opacity=".2"></line><line x1="22" y1="8" x2="22" y2="27" stroke="#FF9900" stroke-width=".6" opacity=".2"></line><line x1="32" y1="8" x2="32" y2="27" stroke="#FF9900" stroke-width=".6" opacity=".2"></line>
+      <path d="M9 18Q21 22.5 34 18" stroke="#FF9900" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".4"></path><path d="M31 16l3 2-3 2" stroke="#FF9900" stroke-width="1.1" fill="none" stroke-linecap="round" opacity=".3"></path>
+      <!-- Cabin -->
+      <path d="M42 11h19l7.5 9.5v10H42z" stroke="url(#bG)" stroke-width="2.5" fill="rgba(255,153,0,.03)" stroke-linejoin="round"></path><path d="M68.5 20.5v10" stroke="#994400" stroke-width=".8" opacity=".2"></path>
+      <path d="M46 14h13l5.5 6.5H46z" stroke="#FF9900" stroke-width="1" fill="rgba(255,153,0,.04)" stroke-linejoin="round"></path><line x1="53.5" y1="14" x2="57" y2="20.5" stroke="#FF9900" stroke-width=".5" opacity=".3"></line>
+      <line x1="42" y1="15" x2="40" y2="13" stroke="#FF9900" stroke-width="1" stroke-linecap="round" opacity=".35"></line><rect x="38" y="11" width="3" height="3" rx=".5" stroke="#FF9900" stroke-width=".6" fill="none" opacity=".25"></rect>
+      <circle cx="69" cy="22" r="2" fill="#FFB833" opacity=".7"></circle><rect x="2" y="14" width="2" height="4" rx="1" fill="#FF6600" opacity=".3"></rect>
+      <rect x="67" y="24" width="3" height="7" rx="1" stroke="#FF9900" stroke-width="1" fill="none" opacity=".25"></rect>
+      <line x1="5" y1="30" x2="67" y2="30" stroke="#FF9900" stroke-width=".7" opacity=".12"></line>
+      <rect x="30" y="30" width="8" height="4" rx="1.5" stroke="#FF9900" stroke-width=".6" fill="none" opacity=".18"></rect>
+      <rect x="0" y="25" width="3" height="2.5" rx=".8" stroke="#FF9900" stroke-width=".7" fill="none" opacity=".25"></rect>
+      <!-- REAR TIRES (4-tire 3D) -->
+      <ellipse cx="14" cy="42" rx="7.5" ry="6.5" stroke="#994400" stroke-width="1.5" fill="none" opacity=".25"></ellipse>
+      <ellipse cx="14" cy="40" rx="7.5" ry="7" stroke="url(#tG)" stroke-width="2.5" fill="none"></ellipse>
+      <ellipse cx="14" cy="40" rx="4.5" ry="4" stroke="#FF9900" stroke-width=".7" fill="none" opacity=".3"></ellipse>
+      <ellipse cx="14" cy="40" rx="2" ry="1.8" fill="#FF9900"></ellipse>
+      <!-- Wheel spin spokes (rear) -->
+      <g class="wheel-spin" style="transform-origin:14px 40px">
+        <line x1="14" y1="34" x2="14" y2="36" stroke="#FF9900" stroke-width=".5" opacity=".25"></line>
+        <line x1="14" y1="44" x2="14" y2="46" stroke="#FF9900" stroke-width=".5" opacity=".25"></line>
+        <line x1="8" y1="40" x2="10" y2="40" stroke="#FF9900" stroke-width=".5" opacity=".25"></line>
+        <line x1="18" y1="40" x2="20" y2="40" stroke="#FF9900" stroke-width=".5" opacity=".25"></line>
+      </g>
+      <line x1="10" y1="42.5" x2="18" y2="42.5" stroke="#994400" stroke-width=".6" opacity=".15"></line>
+      <!-- FRONT TIRES (4-tire 3D) -->
+      <ellipse cx="58" cy="42" rx="7.5" ry="6.5" stroke="#994400" stroke-width="1.5" fill="none" opacity=".25"></ellipse>
+      <ellipse cx="58" cy="40" rx="7.5" ry="7" stroke="url(#tG)" stroke-width="2.5" fill="none"></ellipse>
+      <ellipse cx="58" cy="40" rx="4.5" ry="4" stroke="#FF9900" stroke-width=".7" fill="none" opacity=".3"></ellipse>
+      <ellipse cx="58" cy="40" rx="2" ry="1.8" fill="#FF9900"></ellipse>
+      <!-- Wheel spin spokes (front) -->
+      <g class="wheel-spin" style="transform-origin:58px 40px">
+        <line x1="58" y1="34" x2="58" y2="36" stroke="#FF9900" stroke-width=".5" opacity=".25"></line>
+        <line x1="58" y1="44" x2="58" y2="46" stroke="#FF9900" stroke-width=".5" opacity=".25"></line>
+        <line x1="52" y1="40" x2="54" y2="40" stroke="#FF9900" stroke-width=".5" opacity=".25"></line>
+        <line x1="62" y1="40" x2="64" y2="40" stroke="#FF9900" stroke-width=".5" opacity=".25"></line>
+      </g>
+      <line x1="54" y1="42.5" x2="62" y2="42.5" stroke="#994400" stroke-width=".6" opacity=".15"></line>
+      <!-- Mud flaps -->
+      <rect x="6" y="33" width="1.5" height="5" rx=".5" fill="#FF9900" opacity=".15"></rect><rect x="50" y="33" width="1.5" height="5" rx=".5" fill="#FF9900" opacity=".15"></rect>
+    </svg>
+
+    <!-- Road reflection -->
+    <div class="reflection">
+      <svg width="76" height="12" viewBox="0 0 82 14" fill="none">
+        <rect x="2" y="0" width="40" height="10" rx="2" stroke="#FF9900" stroke-width="1" fill="none" opacity=".3"></rect>
+        <path d="M42 0h19l7.5 6v4H42z" stroke="#FF9900" stroke-width="1" fill="none" opacity=".3"></path>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+const AC=new(window.AudioContext||window.webkitAudioContext)();
+let lastP=-1,isStarted=false,isFirstMessage=true,truckEnabled=true,soundEnabled=true,wasAccel=false;
+let soundCooldown=0,ignitionLock=false,celebrationDone=false;
+const milestonesPassed=new Set();
+
+const captions={1:{text:'📦 Package loaded, route set!',color:'#FF9900'},10:{text:'📍 Left the warehouse',color:'#e6a817'},25:{text:'🛣️ On the highway now',color:'#f97316'},50:{text:'📦 Halfway to delivery!',color:'#FF9900'},75:{text:'🏘️ Entering neighborhood',color:'#f59e0b'},90:{text:'🏠 Almost at the doorstep!',color:'#FF9900'},100:{text:'✅ Package delivered!',color:'#FF9900'}};
+
+function showCaption(m){if(!truckEnabled)return;const c=captions[m];if(!c)return;const ct=document.getElementById('captionContainer');const o=ct.querySelector('.caption');if(o)o.remove();const el=document.createElement('div');el.className='caption';el.textContent=c.text;el.style.color=c.color;ct.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{if(el.parentNode)el.remove()},4200)}
+
+function canPlay(){const now=Date.now();if(now-soundCooldown<1800||!soundEnabled||ignitionLock)return false;soundCooldown=now;return true}
+
+// Backfire flash
+function triggerBackfire(){const bf=document.getElementById('backfire');bf.classList.remove('flash');void bf.offsetWidth;bf.classList.add('flash')}
+
+// === SOUNDS ===
+function playIgnition(){if(!soundEnabled)return;if(AC.state==='suspended')AC.resume();ignitionLock=true;const now=AC.currentTime;
+const cl=AC.createOscillator(),cg=AC.createGain();cl.type='square';cl.frequency.value=2200;cg.gain.setValueAtTime(.45,now);cg.gain.exponentialRampToValueAtTime(.001,now+.04);cl.connect(cg);cg.connect(AC.destination);cl.start(now);cl.stop(now+.04);
+for(let i=0;i<10;i++){const o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=28+Math.random()*14;const t=now+.06+i*.05;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.008);g.gain.exponentialRampToValueAtTime(.001,t+.038);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.038)}
+const ct=now+.58;const s=AC.createOscillator(),sg=AC.createGain(),sf=AC.createBiquadFilter();s.type='sawtooth';s.frequency.value=22;s.frequency.linearRampToValueAtTime(55,ct+.5);sf.type='lowpass';sf.frequency.value=160;sf.Q.value=5;sg.gain.setValueAtTime(0,ct);sg.gain.linearRampToValueAtTime(.55,ct+.2);sg.gain.setValueAtTime(.48,ct+.55);sg.gain.exponentialRampToValueAtTime(.02,ct+1.5);s.connect(sf);sf.connect(sg);sg.connect(AC.destination);s.start(ct);s.stop(ct+1.5);
+const lfo=AC.createOscillator(),lg=AC.createGain();lfo.type='sine';lfo.frequency.value=16;lg.gain.value=14;lfo.connect(lg);lg.connect(s.frequency);lfo.start(ct);lfo.stop(ct+1.5);
+const rt=ct+.85;const r=AC.createOscillator(),rg=AC.createGain(),rf=AC.createBiquadFilter();r.type='sawtooth';r.frequency.value=50;r.frequency.linearRampToValueAtTime(115,rt+.3);r.frequency.linearRampToValueAtTime(62,rt+.7);rf.type='lowpass';rf.frequency.value=300;rf.Q.value=4;rg.gain.setValueAtTime(0,rt);rg.gain.linearRampToValueAtTime(.5,rt+.18);rg.gain.exponentialRampToValueAtTime(.001,rt+.8);r.connect(rf);rf.connect(rg);rg.connect(AC.destination);r.start(rt);r.stop(rt+.8);
+setTimeout(()=>{ignitionLock=false;soundCooldown=Date.now()},2200)}
+
+function playEngine(p){if(!canPlay())return;if(AC.state==='suspended')AC.resume();const now=AC.currentTime,dur=2.5,freq=24+p*.7,vol=.25+(p/100)*.35;
+const s=AC.createOscillator(),sg=AC.createGain(),sf=AC.createBiquadFilter();s.type='sawtooth';s.frequency.value=freq;sf.type='lowpass';sf.frequency.value=80+p*2.5;sf.Q.value=3.5;sg.gain.setValueAtTime(vol,now);sg.gain.setValueAtTime(vol*.85,now+dur*.6);sg.gain.exponentialRampToValueAtTime(.001,now+dur);s.connect(sf);sf.connect(sg);sg.connect(AC.destination);s.start(now);s.stop(now+dur);
+const m=AC.createOscillator(),mg=AC.createGain(),mf=AC.createBiquadFilter();m.type='square';m.frequency.value=freq*2.1;mf.type='bandpass';mf.frequency.value=130+p*3;mf.Q.value=4;mg.gain.setValueAtTime(0,now);mg.gain.linearRampToValueAtTime(vol*.55,now+.04);mg.gain.exponentialRampToValueAtTime(.001,now+dur*.5);m.connect(mf);mf.connect(mg);mg.connect(AC.destination);m.start(now);m.stop(now+dur);
+const lfo=AC.createOscillator(),lg=AC.createGain();lfo.type='sine';lfo.frequency.value=5+p*.08;lg.gain.value=freq*.12;lfo.connect(lg);lg.connect(s.frequency);lfo.start(now);lfo.stop(now+dur)}
+
+function playAccel(p){if(!canPlay())return;if(AC.state==='suspended')AC.resume();const now=AC.currentTime,freq=36+p*.85;
+const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();o.type='sawtooth';o.frequency.setValueAtTime(freq,now);o.frequency.linearRampToValueAtTime(freq*2,now+.22);o.frequency.linearRampToValueAtTime(freq*1.5,now+.5);f.type='lowpass';f.frequency.value=240+p*4;f.Q.value=3;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(.45,now+.08);g.gain.setValueAtTime(.38,now+.28);g.gain.exponentialRampToValueAtTime(.001,now+.6);o.connect(f);f.connect(g);g.connect(AC.destination);o.start(now);o.stop(now+.6);
+triggerBackfire()}
+
+function playBrake(){if(!canPlay())return;if(AC.state==='suspended')AC.resume();const now=AC.currentTime;
+const buf=AC.createBuffer(1,AC.sampleRate*.4,AC.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+const n=AC.createBufferSource();n.buffer=buf;const nf=AC.createBiquadFilter(),ng=AC.createGain();nf.type='bandpass';nf.frequency.value=3800;nf.Q.value=1.5;ng.gain.setValueAtTime(.14,now);ng.gain.exponentialRampToValueAtTime(.001,now+.35);n.connect(nf);nf.connect(ng);ng.connect(AC.destination);n.start(now);n.stop(now+.35);
+const sq=AC.createOscillator(),sqg=AC.createGain();sq.type='sine';sq.frequency.value=1100;sq.frequency.linearRampToValueAtTime(600,now+.2);sqg.gain.setValueAtTime(.03,now);sqg.gain.exponentialRampToValueAtTime(.001,now+.25);sq.connect(sqg);sqg.connect(AC.destination);sq.start(now);sq.stop(now+.25)}
+
+function playHorn(){if(!soundEnabled)return;if(AC.state==='suspended')AC.resume();const now=AC.currentTime;
+[170,210].forEach(f=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sawtooth';o.frequency.value=f;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(.14,now+.06);g.gain.setValueAtTime(.12,now+.7);g.gain.exponentialRampToValueAtTime(.001,now+.95);o.connect(g);g.connect(AC.destination);o.start(now);o.stop(now+.95)})}
+
+function playDing(){if(!soundEnabled)return;if(AC.state==='suspended')AC.resume();const now=AC.currentTime;const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=880;o.frequency.exponentialRampToValueAtTime(1400,now+.08);g.gain.setValueAtTime(.1,now);g.gain.exponentialRampToValueAtTime(.001,now+.45);o.connect(g);g.connect(AC.destination);o.start(now);o.stop(now+.45)}
+
+function playCelebrate(){if(!soundEnabled)return;if(AC.state==='suspended')AC.resume();const now=AC.currentTime;
+[523,659,784,1047,1319].forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=i<3?'sine':'triangle';o.frequency.value=f;g.gain.setValueAtTime(0,now+i*.07);g.gain.linearRampToValueAtTime(.09,now+i*.07+.03);g.gain.exponentialRampToValueAtTime(.001,now+i*.07+1);o.connect(g);g.connect(AC.destination);o.start(now+i*.07);o.stop(now+i*.07+1)})}
+
+// === MAIN ===
+window.addEventListener('message',function(e){
+  if(typeof e.data==='object'&&e.data.cmd){
+    if(e.data.cmd==='toggleTruck'){truckEnabled=e.data.value;document.getElementById('scene').classList.toggle('off',!truckEnabled)}
+    else if(e.data.cmd==='toggleSound'){soundEnabled=e.data.value}
+    return}
+
+  const p=Math.min(parseInt(e.data)||0,100);if(p===lastP)return;
+  const v=document.getElementById('vehicle'),fin=document.getElementById('finish'),me=document.getElementById('markEnd'),rl=document.getElementById('roadLines'),sl=document.getElementById('speedLines');
+
+  // First message = instant position (day switch)
+  if(isFirstMessage){isFirstMessage=false;v.classList.remove('smooth');v.classList.add('instant');v.style.left=(1.5+p*.89)+'%';requestAnimationFrame(()=>requestAnimationFrame(()=>{v.classList.remove('instant');v.classList.add('smooth')}));if(p>0){isStarted=true;v.className='vehicle moving smooth';rl.classList.add('active')}document.getElementById('pct').textContent=p+'%';[10,25,50,75,90,100].forEach(m=>{if(p>=m)milestonesPassed.add(m)});document.querySelectorAll('.milestone-dot').forEach((d,i)=>d.classList.toggle('passed',p>=(i+1)*25));if(p>=100){fin.classList.add('on');me.classList.add('on');celebrationDone=true}sl.classList.toggle('active',p>75);sl.classList.toggle('intense',p>90);lastP=p;return}
+
+  // Position
+  v.style.left=(1.5+p*.89)+'%';document.getElementById('pct').textContent=p+'%';rl.classList.toggle('active',p>0);sl.classList.toggle('active',p>75);sl.classList.toggle('intense',p>90);document.querySelectorAll('.milestone-dot').forEach((d,i)=>d.classList.toggle('passed',p>=(i+1)*25));
+
+  if(!truckEnabled){lastP=p;return}
+
+  // States
+  if(p>0&&!isStarted){
+    isStarted=true;wasAccel=false;v.className='vehicle starting smooth';playIgnition();showCaption(1);
+    setTimeout(()=>{if(lastP>0)v.className='vehicle moving smooth'},1200)
+  }else if(p>lastP&&p>0){
+    wasAccel=true;
+    if(p-lastP>8){v.className='vehicle rough smooth';playAccel(p);setTimeout(()=>{v.className='vehicle moving smooth'},600)}
+    else{v.className='vehicle moving smooth';playEngine(p)}
+  }else if(p<lastP&&p>0){
+    // Was going forward fast → front dip (nose tips forward). Otherwise normal brake dip.
+    if(wasAccel){v.className='vehicle stopping smooth';playBrake()}
+    else{v.className='vehicle braking smooth';playBrake()}
+    wasAccel=false;
+    setTimeout(()=>{if(lastP>0)v.className='vehicle moving smooth'},800)
+  }else if(p===0){v.className='vehicle idle smooth';isStarted=false;celebrationDone=false}
+
+  // Milestones
+  [10,25,50,75,90,100].forEach(m=>{if(p>=m&&!milestonesPassed.has(m)){milestonesPassed.add(m);showCaption(m);if(m<100)playDing()}});
+  [10,25,50,75,90,100].forEach(m=>{if(p<m)milestonesPassed.delete(m)});
+
+  // 100%
+  if(p>=100&&!celebrationDone){celebrationDone=true;fin.classList.add('on');me.classList.add('on');playCelebrate();setTimeout(()=>playHorn(),2500)}
+  else if(p<100){fin.classList.remove('on');me.classList.remove('on');celebrationDone=false}
+
+  lastP=p});
+</script>
+
+</body></html>
