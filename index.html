@@ -219,6 +219,7 @@
         <div class="tabs" id="day-tabs"></div>
         <div id="dark-toggle" class="spin-magic" onclick="toggleDark()" style="cursor:pointer; font-size:20px;">🌓</div>
         <div onclick="logout()" title="Logout & Clear Name" style="cursor:pointer; font-size:18px; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); color:#FCA5A5; transition:0.3s;" onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#FCA5A5'">🏃‍♂️</div>
+        <div id="truck-menu" style="position:relative;display:inline-block;padding-left:10px;border-left:1px solid rgba(255,255,255,0.2);margin-left:10px;"><div onclick="document.getElementById('truck-panel').classList.toggle('show')" style="cursor:pointer;font-size:15px;opacity:0.6;" title="Truck Settings">🚛</div><div id="truck-panel" style="display:none;position:absolute;top:30px;right:-10px;background:var(--card,#1a1a2e);border:1px solid rgba(255,153,0,.2);border-radius:10px;padding:10px 14px;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;"><div onclick="toggleTruckVis()" style="cursor:pointer;padding:4px 0;font-size:12px;color:var(--text,#fff);"><span id="t-icon">🚛</span> <span id="t-label">Truck ON</span></div><div onclick="toggleTruckSnd()" style="cursor:pointer;padding:4px 0;font-size:12px;color:var(--text,#fff);margin-top:4px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px;"><span id="s-icon">🔊</span> <span id="s-label">Sound ON</span></div></div></div><style>#truck-panel.show{display:block!important}</style>
         <div class="pulse-icon" onclick="showCredits(event)" title="Compliance & Insights" style="cursor:pointer; font-size:14px; opacity:0.4; padding-left:12px; border-left:1px solid rgba(255,255,255,0.2); margin-left:10px; color:white;">ⓘ</div>
     </div>
 </header>
@@ -779,6 +780,42 @@ function updateSmartDate() {
         }, 500); 
     }, 1500);
 }
+</script>
+    <!-- Truck iframe -->
+<div style="position:fixed;bottom:0;left:0;right:0;height:90px;z-index:50;pointer-events:none;">
+  <iframe id="truck-frame" src="truck.html" style="width:100%;height:100%;border:none;pointer-events:none;"></iframe>
+</div>
+
+<!-- Truck script -->
+<script>
+var _tOn=true,_sOn=true;
+
+function toggleTruckVis(){
+  _tOn=!_tOn;
+  document.getElementById('t-icon').textContent=_tOn?'🚛':'⏹️';
+  document.getElementById('t-label').textContent=_tOn?'Truck ON':'Truck OFF';
+  var f=document.getElementById('truck-frame');
+  if(f&&f.contentWindow)f.contentWindow.postMessage({cmd:'toggleTruck',value:_tOn},'*');
+}
+
+function toggleTruckSnd(){
+  _sOn=!_sOn;
+  document.getElementById('s-icon').textContent=_sOn?'🔊':'🔇';
+  document.getElementById('s-label').textContent=_sOn?'Sound ON':'Sound OFF';
+  var f=document.getElementById('truck-frame');
+  if(f&&f.contentWindow)f.contentWindow.postMessage({cmd:'toggleSound',value:_sOn},'*');
+}
+
+document.addEventListener('click',function(e){
+  if(!document.getElementById('truck-menu').contains(e.target))
+    document.getElementById('truck-panel').classList.remove('show');
+});
+
+setInterval(function(){
+  var p=parseInt(document.getElementById('prod-out')?.textContent)||0;
+  var f=document.getElementById('truck-frame');
+  if(f&&f.contentWindow)f.contentWindow.postMessage(p,'*');
+},100);
 </script>
 </body>
 </html>
