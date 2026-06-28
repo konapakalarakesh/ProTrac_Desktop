@@ -440,10 +440,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-05-29T23:59:59').getTime();
+    const expiry = new Date('2026-06-30T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `⚠️ Hey ${state.owner.toUpperCase()}  Tracker reverted to Net Efficiency logic for fairness`;
+        document.getElementById('toast-msg').innerText = `⚠️ Hey ${state.owner.toUpperCase()} NEW: Delivery truck animation added! Check the 🚛 icon in header`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
@@ -758,7 +758,7 @@ function updateSmartDate() {
 
     function submitRating(n) {
     if (typeof gtag === 'function') {
-        gtag('event', 'user_feedback', { 'rating': n, 'ver': '2.0' });
+        gtag('event', 'user_feedback', { 'feedback_type': n + '_star', 'rating': n, 'user_name': state.owner || 'anonymous', 'ver': '2.0' });
     }
     
     localStorage.setItem('tool_rated_v2', 'true');
