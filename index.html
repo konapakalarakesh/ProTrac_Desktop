@@ -443,7 +443,7 @@ function triggerToast() {
     const expiry = new Date('2026-06-30T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `⚠️ Hey ${state.owner.toUpperCase()} NEW: Delivery truck animation added! Check the 🚛 icon in header`;
+        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()} Delivery truck animation added! Check the 🚛 icon in header`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
