@@ -20,7 +20,7 @@
   /* ---------- 1. Inject the header icon (next to the truck icon) ---------- */
   var MENU_HTML =
     '<div id="spider-menu" style="position:relative;display:inline-block;padding-left:10px;border-left:1px solid rgba(255,255,255,0.2);margin-left:10px;">' +
-      '<div onclick="document.getElementById(\'spider-panel\').classList.toggle(\'show\')" style="cursor:pointer;font-size:15px;opacity:0.6;" title="Spider Web Settings">🕷️</div>' +
+      '<div onclick="document.getElementById(\'spider-panel\').classList.toggle(\'show\')" title="Spider Web Settings" style="cursor:pointer;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,#ff9900,#e0102a);box-shadow:0 0 8px rgba(224,16,42,.55);">🕷️</div>' +
       '<div id="spider-panel" style="display:none;position:absolute;top:30px;right:-10px;background:var(--card,#1a1a2e);border:1px solid rgba(255,153,0,.2);border-radius:10px;padding:10px 14px;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;">' +
         '<div onclick="toggleWebVis()" style="cursor:pointer;padding:4px 0;font-size:12px;color:var(--text,#fff);"><span id="w-icon">🕷️</span> <span id="w-label">Spider ON</span></div>' +
         '<div onclick="toggleWebSnd()" style="cursor:pointer;padding:4px 0;font-size:12px;color:var(--text,#fff);margin-top:4px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px;"><span id="ws-icon">🔊</span> <span id="ws-label">Sound ON</span></div>' +
@@ -157,6 +157,23 @@
     spiderFrameEl.addEventListener('load', function () {
       var f = spiderFrameEl.contentWindow;
       if (!f) return;
+
+      // Safety net: if theme-realweb.html 404'd (wrong path/filename case on GitHub),
+      // the iframe silently loads GitHub's own error page instead — which has a solid
+      // background and would otherwise blank out the entire dashboard underneath it.
+      // Confirm our actual theme content is there before trusting the overlay.
+      var loadedOk = false;
+      try {
+        loadedOk = !!(spiderFrameEl.contentDocument && spiderFrameEl.contentDocument.getElementById('stage'));
+      } catch (err) { /* cross-origin — assume ok, browser already enforces same-origin here */ loadedOk = true; }
+
+      if (!loadedOk) {
+        console.warn('[spider-web] theme-realweb.html did not load correctly (check the file exists at the same path/case as index.html on GitHub) — hiding the overlay so it does not block the dashboard.');
+        var overlay = spiderFrameEl.parentElement;
+        if (overlay) overlay.style.display = 'none';
+        return;
+      }
+
       f.postMessage({ cmd: 'toggleTruck', value: _webOn }, '*');
       f.postMessage({ cmd: 'toggleSound', value: _webSndOn }, '*');
       f.postMessage({ cmd: 'setColorMode', value: isDark() ? 'dark' : 'light' }, '*');
