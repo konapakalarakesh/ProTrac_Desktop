@@ -56,10 +56,10 @@ body.light-web .corner.lv4{opacity:1}
 .intro-glyph{max-width:min(72vw,320px);max-height:clamp(120px,26vw,220px);width:auto;height:auto;opacity:0;transform:scale(.6);object-fit:contain;filter:drop-shadow(0 0 14px var(--web-hero-glow))}
 #intro.play .intro-glyph{animation:glyphPop 3.6s ease forwards}
 @keyframes glyphPop{0%{opacity:0;transform:scale(.5) rotate(-15deg)}18%{opacity:1;transform:scale(1.08) rotate(0)}30%{transform:scale(1) rotate(0)}80%{opacity:1}100%{opacity:0;transform:scale(1.1)}}
-.intro-title{font-size:clamp(18px,2.6vw,30px);font-weight:900;letter-spacing:3px;color:var(--web-intro-title);text-shadow:0 0 14px var(--web-intro-title-shadow);opacity:0;transform:translateY(10px)}
+.intro-title{font-size:clamp(18px,2.6vw,30px);font-weight:900;letter-spacing:3px;color:#e0102a;-webkit-text-stroke:1px rgba(255,255,255,.55);text-shadow:0 0 16px rgba(224,16,42,.55),0 2px 4px rgba(0,0,0,.35);opacity:0;transform:translateY(10px)}
 #intro.play .intro-title{animation:titleRise 3.6s ease forwards}
 @keyframes titleRise{0%{opacity:0;transform:translateY(14px)}22%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
-.intro-sub{font-size:clamp(9px,1vw,12px);letter-spacing:2px;color:var(--web-intro-sub);opacity:0}
+.intro-sub{font-size:clamp(9px,1vw,12px);letter-spacing:2px;font-weight:600;color:#1b2a6b;opacity:0}
 #intro.play .intro-sub{animation:subFade 3.6s ease forwards}
 @keyframes subFade{0%{opacity:0}30%{opacity:.8}78%{opacity:.8}100%{opacity:0}}
 
@@ -137,7 +137,7 @@ body.light-web .corner.lv4{opacity:1}
 
 <div id="intro">
   <!-- SPIDER_IMG: swap this src for your GitHub raw image URL later -->
-  <img class="intro-glyph" id="spiderImg" src="spiderman.jpg" alt="" onerror="this.style.display='none'">
+  <img class="intro-glyph" id="spiderImg" src="spiderman.jpg" onerror="this.style.display='none'">
   <div class="intro-title">Spider Web Mode</div>
   <div class="intro-sub">A konapaks creation</div>
 </div>
