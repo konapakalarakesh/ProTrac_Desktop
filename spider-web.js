@@ -20,13 +20,17 @@
   /* ---------- 1. Inject the header icon (next to the truck icon) ---------- */
   var MENU_HTML =
     '<div id="spider-menu" style="position:relative;display:inline-block;padding-left:10px;border-left:1px solid rgba(255,255,255,0.2);margin-left:10px;">' +
-      '<div onclick="document.getElementById(\'spider-panel\').classList.toggle(\'show\')" title="Spider Web Settings" style="cursor:pointer;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,#ff9900,#e0102a);box-shadow:0 0 8px rgba(224,16,42,.55);">🕷️</div>' +
-      '<div id="spider-panel" style="display:none;position:absolute;top:30px;right:-10px;background:var(--card,#1a1a2e);border:1px solid rgba(255,153,0,.2);border-radius:10px;padding:10px 14px;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;">' +
+      '<div id="spider-icon-btn" onclick="document.getElementById(\'spider-panel\').classList.toggle(\'show\')" title="Spider Web Settings" style="cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,#ff9900,#e0102a);border:1.5px solid rgba(255,255,255,.65);box-shadow:0 0 0 rgba(224,16,42,.55);animation:spiderPulse 2.6s ease-in-out infinite;transition:transform .15s ease;">🕷️</div>' +
+      '<div id="spider-panel" style="display:none;position:absolute;top:34px;right:-10px;background:var(--card,#1a1a2e);border:1px solid rgba(255,153,0,.2);border-radius:10px;padding:10px 14px;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;">' +
         '<div onclick="toggleWebVis()" style="cursor:pointer;padding:4px 0;font-size:12px;color:var(--text,#fff);"><span id="w-icon">🕷️</span> <span id="w-label">Spider ON</span></div>' +
         '<div onclick="toggleWebSnd()" style="cursor:pointer;padding:4px 0;font-size:12px;color:var(--text,#fff);margin-top:4px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px;"><span id="ws-icon">🔊</span> <span id="ws-label">Sound ON</span></div>' +
       '</div>' +
     '</div>' +
-    '<style>#spider-panel.show{display:block!important}</style>';
+    '<style>' +
+      '#spider-panel.show{display:block!important}' +
+      '#spider-icon-btn:hover{transform:scale(1.12)}' +
+      '@keyframes spiderPulse{0%,100%{box-shadow:0 0 0 0 rgba(224,16,42,.45)}50%{box-shadow:0 0 0 5px rgba(224,16,42,0)}}' +
+    '</style>';
 
   var truckMenu = document.getElementById('truck-menu');
   if (truckMenu) {
