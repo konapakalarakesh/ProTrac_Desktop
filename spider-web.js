@@ -186,10 +186,39 @@
   }
 
   /* ---------- 8. Keep the web-frame glued to whichever productivity number is on screen ---------- */
-  setInterval(function () {
+  function getActiveProdEl() {
     var summaryUi = document.getElementById('summary-ui');
     var onWeekly = summaryUi && !summaryUi.classList.contains('hidden');
-    var activeProdEl = document.getElementById(onWeekly ? 'week-prod-out' : 'prod-out');
+    return document.getElementById(onWeekly ? 'week-prod-out' : 'prod-out');
+  }
+
+  function sendProdRect() {
+    if (!spiderFrameEl || !spiderFrameEl.contentWindow) return;
+    var activeProdEl = getActiveProdEl();
+    if (!activeProdEl) return;
+    var r = activeProdEl.getBoundingClientRect();
+    if (r.width > 0 && r.height > 0) {
+      spiderFrameEl.contentWindow.postMessage({ cmd: 'prodRect', rect: { left: r.left, top: r.top, width: r.width, height: r.height } }, '*');
+    }
+  }
+
+  // A 100ms poll alone means the web-frame only "catches up" to the number every
+  // 100ms — visibly lagging behind fast scrolling. Instead, recompute the rect on
+  // every actual scroll/resize event too (rAF-throttled so it stays cheap), so the
+  // frame stays glued to the number in real time instead of chasing it.
+  var _rectRAF = null;
+  function scheduleProdRectUpdate() {
+    if (_rectRAF) return;
+    _rectRAF = requestAnimationFrame(function () {
+      _rectRAF = null;
+      sendProdRect();
+    });
+  }
+  document.addEventListener('scroll', scheduleProdRectUpdate, { passive: true, capture: true });
+  window.addEventListener('resize', scheduleProdRectUpdate);
+
+  setInterval(function () {
+    var activeProdEl = getActiveProdEl();
     var p = parseInt((activeProdEl && activeProdEl.textContent) || '0') || 0;
 
     if (spiderFrameEl && spiderFrameEl.contentWindow) {
@@ -197,12 +226,7 @@
       f.postMessage(p, '*');
       f.postMessage({ cmd: 'setColorMode', value: isDark() ? 'dark' : 'light' }, '*');
       f.postMessage({ cmd: 'headerOffset', value: computeHeaderOffset() }, '*');
-      if (activeProdEl) {
-        var r = activeProdEl.getBoundingClientRect();
-        if (r.width > 0 && r.height > 0) {
-          f.postMessage({ cmd: 'prodRect', rect: { left: r.left, top: r.top, width: r.width, height: r.height } }, '*');
-        }
-      }
+      sendProdRect();
     }
   }, 100);
 })();
