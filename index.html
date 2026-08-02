@@ -199,6 +199,14 @@
         <input type="text" id="user-name-in" maxlength="12" onkeydown="if(event.key==='Enter') setName()" placeholder="Your sweet name..." style="padding:15px; border-radius:12px; border:none; width:260px; text-align:center; font-weight:700; outline:none;">
         <br><button onclick="setName()" style="margin-top:20px; padding:12px 50px; border-radius:30px; background: var(--amz); border:none; font-weight:800; cursor:pointer; color:white;">LAUNCH</button>
     </div>
+    <script>
+(function(){
+  try{
+    var s=JSON.parse(localStorage.getItem('ops_vFinal_v4'));
+    if(s&&s.owner){document.getElementById('name-gate').style.display='none';}
+  }catch(e){}
+})();
+</script>
 </div>
 
 <header>
@@ -699,10 +707,10 @@ function downloadTextReport() {
     link.click();
 }
 
-window.onload = () => { 
+document.addEventListener('DOMContentLoaded', () => { 
     if(state.owner) { init(); triggerToast(); }
     else document.getElementById('user-name-in').focus();
-};
+});
 
 document.addEventListener('input', (e) => {
     if(e.target.id !== 'nph-reason-day') save();
