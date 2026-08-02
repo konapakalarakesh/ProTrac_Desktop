@@ -56,10 +56,11 @@ body.light-web .corner.lv4{opacity:1}
 .intro-glyph{max-width:min(72vw,320px);max-height:clamp(120px,26vw,220px);width:auto;height:auto;opacity:0;transform:scale(.6);object-fit:contain;filter:drop-shadow(0 0 14px var(--web-hero-glow))}
 #intro.play .intro-glyph{animation:glyphPop 3.6s ease forwards}
 @keyframes glyphPop{0%{opacity:0;transform:scale(.5) rotate(-15deg)}18%{opacity:1;transform:scale(1.08) rotate(0)}30%{transform:scale(1) rotate(0)}80%{opacity:1}100%{opacity:0;transform:scale(1.1)}}
-.intro-title{font-size:clamp(18px,2.6vw,30px);font-weight:900;letter-spacing:3px;color:#e0102a;-webkit-text-stroke:1px rgba(255,255,255,.55);text-shadow:0 0 16px rgba(224,16,42,.55),0 2px 4px rgba(0,0,0,.35);opacity:0;transform:translateY(10px)}
+.intro-title{font-size:clamp(20px,2.3vw,32px);font-weight:700;letter-spacing:7px;text-transform:uppercase;background:linear-gradient(100deg,#7a0d1c 0%,#e0102a 35%,#ff6b7f 50%,#e0102a 65%,#7a0d1c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 10px rgba(224,16,42,.35));opacity:0;transform:translateY(10px);position:relative}
+.intro-title::after{content:'';position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);width:64px;height:1px;background:linear-gradient(90deg,transparent,#e0102a,transparent)}
 #intro.play .intro-title{animation:titleRise 3.6s ease forwards}
 @keyframes titleRise{0%{opacity:0;transform:translateY(14px)}22%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
-.intro-sub{font-size:clamp(9px,1vw,12px);letter-spacing:2px;font-weight:600;color:#1b2a6b;opacity:0}
+.intro-sub{font-size:clamp(9px,1vw,12px);letter-spacing:5px;font-weight:500;text-transform:uppercase;color:#425089;opacity:0}
 #intro.play .intro-sub{animation:subFade 3.6s ease forwards}
 @keyframes subFade{0%{opacity:0}30%{opacity:.8}78%{opacity:.8}100%{opacity:0}}
 
