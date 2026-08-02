@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:transparent;width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',sans-serif}
+
+/* ===== Spider web color system =====
+   DARK MODE (default) = gold/amber web, as before.
+   LIGHT MODE = ash/black web (add class "light-web" to <body>, done automatically
+   via postMessage cmd:'setColorMode'). Every color below is a CSS var so both
+   the CSS and the JS-drawn SVG (which lives in the DOM) pick it up automatically. */
+:root{
+  --web-glow1:#fff6e2; --web-glow2:#e8c98a; --web-dew:#fff9ec;
+  --web-text:#ffe9c4; --web-band:rgba(20,14,8,.88); --web-border:rgba(255,200,120,.3);
+  --web-god:#ffd98a; --web-god-shadow:rgba(255,180,90,.9);
+  --web-hero-glow:rgba(255,190,110,.35); --web-hero-god-glow:rgba(255,210,140,.75);
+  --web-webline1:rgba(255,255,255,.75); --web-webline2:rgba(255,220,170,.3);
+  --web-thwip:rgba(255,240,210,.85); --web-corner-shadow:rgba(255,220,160,.5);
+  --web-ambient1:rgba(255,214,140,.10); --web-ambient2:rgba(255,190,120,.08);
+  --web-ambient3:rgba(255,200,140,.09); --web-ambient4:rgba(255,210,150,.08);
+  --web-intro-bg1:rgba(30,20,10,.55); --web-intro-bg2:rgba(10,7,4,.85);
+  --web-intro-title:#ffe4ab; --web-intro-title-shadow:rgba(255,190,110,.7); --web-intro-sub:#d8c19a;
+}
+body.light-web{
+  --web-glow1:#e2e2e2; --web-glow2:#161616; --web-dew:#ffffff;
+  --web-text:#111111; --web-band:rgba(255,255,255,.95); --web-border:rgba(20,20,20,.35);
+  --web-god:#111111; --web-god-shadow:rgba(0,0,0,.5);
+  --web-hero-glow:rgba(10,10,10,.4); --web-hero-god-glow:rgba(0,0,0,.65);
+  --web-webline1:rgba(10,10,10,.9); --web-webline2:rgba(60,60,60,.5);
+  --web-thwip:rgba(20,20,20,.85); --web-corner-shadow:rgba(0,0,0,.55);
+  --web-ambient1:rgba(60,60,60,.16); --web-ambient2:rgba(40,40,40,.13);
+  --web-ambient3:rgba(50,50,50,.14); --web-ambient4:rgba(30,30,30,.12);
+  --web-intro-bg1:rgba(210,210,210,.6); --web-intro-bg2:rgba(248,248,248,.92);
+  --web-intro-title:#0d0d0d; --web-intro-title-shadow:rgba(0,0,0,.45); --web-intro-sub:#333333;
+}
+/* Ash web needs a bump in raw opacity too — the gold corners were designed to look
+   good faint; on white/ash they read as barely-there unless pushed up a level. */
+body.light-web .corner.lv1{opacity:.34}
+body.light-web .corner.tr.lv1{transform:scale(.8) scaleX(-1)}
+body.light-web .corner.bl.lv1{transform:scale(.8) scaleY(-1)}
+body.light-web .corner.br.lv1{transform:scale(.8) scale(-1,-1)}
+body.light-web .corner.lv2{opacity:.56}
+body.light-web .corner.tr.lv2{transform:scale(.94) scaleX(-1)}
+body.light-web .corner.bl.lv2{transform:scale(.94) scaleY(-1)}
+body.light-web .corner.br.lv2{transform:scale(.94) scale(-1,-1)}
+body.light-web .corner.lv3{opacity:.82}
+body.light-web .corner.lv4{opacity:1}
+
+.stage{position:fixed;inset:0;transition:opacity .7s ease}
+.stage.off{opacity:0}
+
+/* ===== Intro title sequence — original wordmark, plays once per page load ===== */
+#intro{position:fixed;inset:0;display:flex;align-items:center;justify-content:flex-start;flex-direction:column;gap:clamp(8px,1.4vw,16px);padding-top:clamp(190px,25vh,260px);background:radial-gradient(circle at 50% 40%,var(--web-intro-bg1),var(--web-intro-bg2));opacity:0;pointer-events:none;z-index:100}
+#intro.play{animation:introSeq 3.6s ease forwards}
+@keyframes introSeq{0%{opacity:0}10%{opacity:1}78%{opacity:1}100%{opacity:0}}
+.intro-glyph{max-width:min(72vw,320px);max-height:clamp(120px,26vw,220px);width:auto;height:auto;opacity:0;transform:scale(.6);object-fit:contain;filter:drop-shadow(0 0 14px var(--web-hero-glow))}
+#intro.play .intro-glyph{animation:glyphPop 3.6s ease forwards}
+@keyframes glyphPop{0%{opacity:0;transform:scale(.5) rotate(-15deg)}18%{opacity:1;transform:scale(1.08) rotate(0)}30%{transform:scale(1) rotate(0)}80%{opacity:1}100%{opacity:0;transform:scale(1.1)}}
+.intro-title{font-size:clamp(18px,2.6vw,30px);font-weight:900;letter-spacing:3px;color:var(--web-intro-title);text-shadow:0 0 14px var(--web-intro-title-shadow);opacity:0;transform:translateY(10px)}
+#intro.play .intro-title{animation:titleRise 3.6s ease forwards}
+@keyframes titleRise{0%{opacity:0;transform:translateY(14px)}22%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
+.intro-sub{font-size:clamp(9px,1vw,12px);letter-spacing:2px;color:var(--web-intro-sub);opacity:0}
+#intro.play .intro-sub{animation:subFade 3.6s ease forwards}
+@keyframes subFade{0%{opacity:0}30%{opacity:.8}78%{opacity:.8}100%{opacity:0}}
+
+/* warm ambient bokeh (dark mode) / cool ash bokeh (light mode), scales as coverage grows */
+.ambient{position:fixed;inset:0;background:
+  radial-gradient(circle at 8% 8%, var(--web-ambient1), transparent 32%),
+  radial-gradient(circle at 94% 12%, var(--web-ambient2), transparent 30%),
+  radial-gradient(circle at 6% 92%, var(--web-ambient3), transparent 30%),
+  radial-gradient(circle at 95% 90%, var(--web-ambient4), transparent 32%);
+  opacity:0;transition:opacity 1.2s}
+.ambient.on{opacity:1}
+
+/* ===== Corner webs — sized in vmin so laptop + desktop both look proportional ===== */
+.corner{position:absolute;width:clamp(120px,14vmin,220px);height:clamp(120px,14vmin,220px);opacity:.06;transform:scale(.68);transition:opacity 1s ease,transform 1s ease;filter:drop-shadow(0 0 2px rgba(0,0,0,.15));will-change:opacity,transform}
+.corner.tl{top:-14px;left:-14px}
+.corner.tr{top:-14px;right:-14px;transform:scale(.68) scaleX(-1)}
+.corner.bl{bottom:-14px;left:-14px;transform:scale(.68) scaleY(-1)}
+.corner.br{bottom:-14px;right:-14px;transform:scale(.68) scale(-1,-1)}
+.corner.lv1{opacity:.18;transform:scale(.8)}
+.corner.tr.lv1{transform:scale(.8) scaleX(-1)}
+.corner.bl.lv1{transform:scale(.8) scaleY(-1)}
+.corner.br.lv1{transform:scale(.8) scale(-1,-1)}
+.corner.lv2{opacity:.36;transform:scale(.94)}
+.corner.tr.lv2{transform:scale(.94) scaleX(-1)}
+.corner.bl.lv2{transform:scale(.94) scaleY(-1)}
+.corner.br.lv2{transform:scale(.94) scale(-1,-1)}
+.corner.lv3{opacity:.62;transform:scale(1.08)}
+.corner.tr.lv3{transform:scale(1.08) scaleX(-1)}
+.corner.bl.lv3{transform:scale(1.08) scaleY(-1)}
+.corner.br.lv3{transform:scale(1.08) scale(-1,-1)}
+.corner.lv4{opacity:.92;transform:scale(1.24);filter:drop-shadow(0 0 8px var(--web-corner-shadow))}
+.corner.tr.lv4{transform:scale(1.24) scaleX(-1)}
+.corner.bl.lv4{transform:scale(1.24) scaleY(-1)}
+.corner.br.lv4{transform:scale(1.24) scale(-1,-1)}
+.dew{animation:twinkle 2.6s ease-in-out infinite}
+.dew:nth-child(odd){animation-delay:.9s}
+@keyframes twinkle{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ===== Web frame around the live productivity number ===== */
+#webFrame{position:fixed;pointer-events:none;opacity:0;transition:opacity .6s;filter:drop-shadow(0 0 3px rgba(255,255,255,.25));will-change:opacity}
+#webFrame.show{opacity:1}
+
+/* ===== Caption + banner — clamp() keeps text proportional across screen sizes ===== */
+.caption-container{position:absolute;top:14px;left:0;width:100%;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:30}
+.caption{font-size:clamp(10px,1vw,13px);font-weight:700;letter-spacing:.3px;opacity:0;white-space:nowrap;padding:6px 16px;border-radius:14px;background:var(--web-band);color:var(--web-text);backdrop-filter:blur(8px);border:1px solid var(--web-border)}
+.caption.show{animation:capReveal 4s ease forwards}
+@keyframes capReveal{0%{opacity:0;transform:scale(.88) translateY(4px)}12%{opacity:1;transform:scale(1) translateY(0)}78%{opacity:1;transform:scale(1) translateY(0)}100%{opacity:0;transform:scale(.95) translateY(-3px)}}
+
+.godbanner{position:absolute;top:38px;left:0;width:100%;text-align:center;font-size:clamp(11px,1.2vw,15px);font-weight:900;letter-spacing:1.5px;color:var(--web-god);text-shadow:0 0 10px var(--web-god-shadow);opacity:0;pointer-events:none;z-index:40}
+.godbanner.on{animation:godPulse 1s ease-in-out infinite}
+@keyframes godPulse{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+
+/* ===== Backlit silhouette — original shape, no character design ===== */
+.hero{position:fixed;width:clamp(28px,3vw,40px);height:clamp(36px,4vw,52px);z-index:10;transform-origin:top center;transition:left 1.4s cubic-bezier(.22,.7,.32,1), top 1.4s cubic-bezier(.22,.7,.32,1);filter:drop-shadow(0 0 10px var(--web-hero-glow));will-change:left,top;display:none}
+.hero.instant{transition:none}
+.hero.idle{animation:idleSway 3.6s ease-in-out infinite}
+.hero.drop{animation:dropIn .8s cubic-bezier(.2,.8,.3,1.2)}
+.hero.swing{animation:swingArc .55s ease-in-out infinite alternate}
+.hero.fastswing{animation:swingArc .2s ease-in-out infinite alternate}
+.hero.brake{animation:grabWall .6s cubic-bezier(.2,.85,.3,1.1) forwards}
+.hero.god{animation:swingArc .11s ease-in-out infinite alternate;filter:drop-shadow(0 0 14px var(--web-hero-god-glow))}
+@keyframes idleSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes dropIn{0%{transform:translateY(-40px) rotate(0)}60%{transform:translateY(4px) rotate(8deg)}100%{transform:translateY(0) rotate(0)}}
+@keyframes swingArc{0%{transform:rotate(-24deg)}100%{transform:rotate(24deg)}}
+@keyframes grabWall{0%{transform:rotate(0)}30%{transform:rotate(-10deg) translateX(-3px)}60%{transform:rotate(4deg)}100%{transform:rotate(0)}}
+
+.webline{position:fixed;top:0;width:1px;background:linear-gradient(180deg,var(--web-webline1),var(--web-webline2));transform-origin:top center;transition:left 1.4s cubic-bezier(.22,.7,.32,1);height:0;will-change:left,height}
+.webline.active{height:var(--wlh,60px)}
+
+.thwip{position:fixed;height:1px;background:linear-gradient(90deg,var(--web-thwip),transparent);opacity:0;pointer-events:none}
+.thwip.go{animation:thwipFly .35s ease-out forwards}
+@keyframes thwipFly{0%{opacity:.9;width:0}100%{opacity:0;width:100px}}
+</style></head>
+<body>
+
+<div id="intro">
+  <!-- SPIDER_IMG: swap this src for your GitHub raw image URL later -->
+  <img class="intro-glyph" id="spiderImg" src="file:///C:/Users/konapaks/Desktop/files%20(6)/images.jpg" alt="" onerror="this.style.display='none'">
+  <div class="intro-title">WEB MODE</div>
+  <div class="intro-sub">PRODUCTIVITY TRACKING ACTIVATED</div>
+</div>
+
+<div class="stage" id="stage">
+  <div class="ambient" id="ambient"></div>
+
+  <svg class="corner tl" id="cTL" viewBox="0 0 190 190">
+    <g stroke="url(#silk)" fill="none" stroke-width="1" stroke-linecap="round">
+      <path d="M0 0 L190 70"/><path d="M0 0 L150 150"/><path d="M0 0 L70 190"/><path d="M0 0 L190 190"/>
+      <path d="M0 0 L110 20"/><path d="M0 0 L20 110"/>
+      <path d="M6 3 Q50 22 62 62 Q78 44 118 12"/>
+      <path d="M16 9 Q72 36 92 92 Q114 70 158 30"/>
+      <path d="M28 16 Q100 52 124 124 Q152 96 182 50"/>
+    </g>
+    <defs><linearGradient id="silk" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" style="stop-color:var(--web-glow1)"/><stop offset="100%" style="stop-color:var(--web-glow2)"/></linearGradient></defs>
+    <circle class="dew" cx="62" cy="62" r="1.6" style="fill:var(--web-dew)"/><circle class="dew" cx="92" cy="92" r="1.4" style="fill:var(--web-dew)"/><circle class="dew" cx="124" cy="124" r="1.8" style="fill:var(--web-dew)"/><circle class="dew" cx="40" cy="18" r="1.2" style="fill:var(--web-dew)"/>
+  </svg>
+  <svg class="corner tr" id="cTR" viewBox="0 0 190 190">
+    <g stroke="url(#silk2)" fill="none" stroke-width="1" stroke-linecap="round">
+      <path d="M0 0 L190 70"/><path d="M0 0 L150 150"/><path d="M0 0 L70 190"/><path d="M0 0 L190 190"/>
+      <path d="M0 0 L110 20"/><path d="M0 0 L20 110"/>
+      <path d="M6 3 Q50 22 62 62 Q78 44 118 12"/>
+      <path d="M16 9 Q72 36 92 92 Q114 70 158 30"/>
+      <path d="M28 16 Q100 52 124 124 Q152 96 182 50"/>
+    </g>
+    <defs><linearGradient id="silk2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" style="stop-color:var(--web-glow1)"/><stop offset="100%" style="stop-color:var(--web-glow2)"/></linearGradient></defs>
+    <circle class="dew" cx="62" cy="62" r="1.6" style="fill:var(--web-dew)"/><circle class="dew" cx="92" cy="92" r="1.4" style="fill:var(--web-dew)"/><circle class="dew" cx="124" cy="124" r="1.8" style="fill:var(--web-dew)"/><circle class="dew" cx="40" cy="18" r="1.2" style="fill:var(--web-dew)"/>
+  </svg>
+  <svg class="corner bl" id="cBL" viewBox="0 0 190 190">
+    <g stroke="url(#silk3)" fill="none" stroke-width="1" stroke-linecap="round">
+      <path d="M0 0 L190 70"/><path d="M0 0 L150 150"/><path d="M0 0 L70 190"/><path d="M0 0 L190 190"/>
+      <path d="M0 0 L110 20"/><path d="M0 0 L20 110"/>
+      <path d="M6 3 Q50 22 62 62 Q78 44 118 12"/>
+      <path d="M16 9 Q72 36 92 92 Q114 70 158 30"/>
+      <path d="M28 16 Q100 52 124 124 Q152 96 182 50"/>
+    </g>
+    <defs><linearGradient id="silk3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" style="stop-color:var(--web-glow1)"/><stop offset="100%" style="stop-color:var(--web-glow2)"/></linearGradient></defs>
+    <circle class="dew" cx="62" cy="62" r="1.6" style="fill:var(--web-dew)"/><circle class="dew" cx="92" cy="92" r="1.4" style="fill:var(--web-dew)"/><circle class="dew" cx="124" cy="124" r="1.8" style="fill:var(--web-dew)"/><circle class="dew" cx="40" cy="18" r="1.2" style="fill:var(--web-dew)"/>
+  </svg>
+  <svg class="corner br" id="cBR" viewBox="0 0 190 190">
+    <g stroke="url(#silk4)" fill="none" stroke-width="1" stroke-linecap="round">
+      <path d="M0 0 L190 70"/><path d="M0 0 L150 150"/><path d="M0 0 L70 190"/><path d="M0 0 L190 190"/>
+      <path d="M0 0 L110 20"/><path d="M0 0 L20 110"/>
+      <path d="M6 3 Q50 22 62 62 Q78 44 118 12"/>
+      <path d="M16 9 Q72 36 92 92 Q114 70 158 30"/>
+      <path d="M28 16 Q100 52 124 124 Q152 96 182 50"/>
+    </g>
+    <defs><linearGradient id="silk4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" style="stop-color:var(--web-glow1)"/><stop offset="100%" style="stop-color:var(--web-glow2)"/></linearGradient></defs>
+    <circle class="dew" cx="62" cy="62" r="1.6" style="fill:var(--web-dew)"/><circle class="dew" cx="92" cy="92" r="1.4" style="fill:var(--web-dew)"/><circle class="dew" cx="124" cy="124" r="1.8" style="fill:var(--web-dew)"/><circle class="dew" cx="40" cy="18" r="1.2" style="fill:var(--web-dew)"/>
+  </svg>
+
+  <svg id="webFrame"></svg>
+
+  <div class="godbanner" id="godBanner">✨ FULL WEB MASTERY ✨</div>
+  <div class="caption-container" id="captionContainer"></div>
+
+  <div class="webline" id="webline"></div>
+  <div class="thwip" id="thwip"></div>
+
+  <svg class="hero" id="hero" viewBox="0 0 28 40" xmlns="http://www.w3.org/2000/svg">
+    <line x1="14" y1="0" x2="14" y2="6" stroke="#f5e0b8" stroke-width="1" opacity=".8"/>
+    <g fill="#120d08">
+      <circle cx="14" cy="9" r="5.4"/>
+      <path d="M8 16 Q14 13 20 16 L19 27 Q14 30 9 27 Z"/>
+      <path d="M8 17 L2 12" stroke="#120d08" stroke-width="3" stroke-linecap="round"/>
+      <path d="M20 17 L27 22" stroke="#120d08" stroke-width="3" stroke-linecap="round"/>
+      <path d="M11 28 L9 39" stroke="#120d08" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M17 28 L19 39" stroke="#120d08" stroke-width="3.2" stroke-linecap="round"/>
+    </g>
+  </svg>
+</div>
+
+<audio id="a-drop" src="realweb-drop.mp3" preload="none"></audio>
+<audio id="a-swing" src="realweb-swing.mp3" preload="none"></audio>
+<audio id="a-thwip" src="realweb-thwip.mp3" preload="none"></audio>
+<audio id="a-land" src="realweb-land.mp3" preload="none"></audio>
+<audio id="a-milestone" src="realweb-milestone.mp3" preload="none"></audio>
+<audio id="a-godmode" src="realweb-godmode.mp3" preload="none"></audio>
+<audio id="a-webspin" src="realweb-webspin.mp3" preload="none"></audio>
+
+<script>
+let lastP=-1,isFirstMessage=true,themeEnabled=true,soundEnabled=true,isStarted=false,godOn=false;
+let prodRect=null,lastWebLevel=-1,lastFrameBucket=-1,lastCornerLevel=-1;
+let rafScheduled=false,pendingP=0;
+const milestonesPassed=new Set();
+const captions={1:{text:'🕸️ First threads catching the light...'},10:{text:'🌤️ The web begins to shimmer'},25:{text:'🍂 Quarter woven'},50:{text:'🕸️ Halfway — glistening in full'},75:{text:'✨ Nearly complete'},90:{text:'🌟 Final strands settling'},100:{text:'🏆 Web fully spun!'}};
+
+function play(id){if(!soundEnabled)return;const el=document.getElementById(id);if(!el)return;try{el.currentTime=0;el.play().catch(()=>{})}catch(e){}}
+
+function showCaption(m){if(!themeEnabled)return;const c=captions[m];if(!c)return;const ct=document.getElementById('captionContainer');const o=ct.querySelector('.caption');if(o)o.remove();const el=document.createElement('div');el.className='caption';el.textContent=c.text;ct.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{if(el.parentNode)el.remove()},4200)}
+
+function playIntro(){
+  const el=document.getElementById('intro');
+  el.classList.add('play');
+  setTimeout(()=>{el.style.display='none'},3700);
+  updateThemeMusic();
+}
+
+function cornerLevel(p){
+  const lv=p>=100?4:p>=75?3:p>=40?2:p>=10?1:0;
+  if(lv===lastCornerLevel)return;
+  lastCornerLevel=lv;
+  ['cTL','cTR','cBL','cBR'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.classList.remove('lv1','lv2','lv3','lv4');
+    if(lv>0)el.classList.add('lv'+lv);
+  });
+  document.getElementById('ambient').classList.toggle('on',p>0);
+}
+
+// Rebuilds the spiral web hugging the live productivity number. Expensive (SVG rebuild),
+// so it's bucketed to every ~4% of movement instead of every single tick — this is what
+// was causing the stutter before. Position tracking (the hero, the webline) stays on its
+// own smooth CSS transition and is never throttled.
+function drawWebFrame(p){
+  if(!prodRect)return;
+  const bucket=Math.floor(p/4);
+  if(bucket===lastFrameBucket)return;
+  lastFrameBucket=bucket;
+
+  const svg=document.getElementById('webFrame');
+  const pad=16+Math.min(p,100)*.3;
+  const x=prodRect.left-pad, y=prodRect.top-pad, w=prodRect.width+pad*2, h=prodRect.height+pad*2;
+  svg.setAttribute('style',`left:${x}px;top:${y}px;width:${w}px;height:${h}px;position:fixed`);
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  const cx=w/2, cy=h/2, maxR=Math.min(cx,cy);
+  const spokes=5+Math.min(Math.floor(p/10),9);
+  let content=`<defs><linearGradient id="fSilk" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" style="stop-color:var(--web-glow1)"/><stop offset="100%" style="stop-color:var(--web-glow2)"/></linearGradient></defs>`;
+  const spokeAngles=[];
+  for(let i=0;i<spokes;i++){
+    const jitter=(Math.sin(i*12.9)*0.06);
+    const ang=(i/spokes)*Math.PI*2+jitter;
+    spokeAngles.push(ang);
+    const ex=cx+Math.cos(ang)*maxR, ey=cy+Math.sin(ang)*maxR;
+    content+=`<line x1="${cx}" y1="${cy}" x2="${ex}" y2="${ey}" stroke="url(#fSilk)" stroke-width=".8" opacity="${p>=100?.9:.55}"/>`;
+  }
+  const turns=1+Math.min(p/22,4.5);
+  const steps=Math.floor(spokes*turns);
+  let path='';
+  for(let s=0;s<=steps;s++){
+    const t=s/steps;
+    const r=maxR*0.18+t*(maxR*0.82);
+    const realAng=spokeAngles[s%spokes];
+    const px=cx+Math.cos(realAng)*Math.min(r,maxR), py=cy+Math.sin(realAng)*Math.min(r,maxR);
+    path+=(s===0?'M':'L')+px.toFixed(1)+' '+py.toFixed(1)+' ';
+  }
+  content+=`<path d="${path}" fill="none" stroke="url(#fSilk)" stroke-width=".7" opacity="${.35+Math.min(p,100)/100*.5}"/>`;
+  const glints=Math.min(2+Math.floor(p/20),7);
+  for(let g=0;g<glints;g++){
+    const ang=spokeAngles[g%spokeAngles.length];
+    const r=maxR*(0.35+0.5*((g%3)/3));
+    const gx=cx+Math.cos(ang)*r, gy=cy+Math.sin(ang)*r;
+    content+=`<circle class="dew" cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" r="1.3" style="fill:var(--web-dew)"/>`;
+  }
+  svg.innerHTML=content;
+  svg.classList.add('show');
+  const lvl=Math.floor(p/12);
+  if(lvl!==lastWebLevel){lastWebLevel=lvl;play('a-webspin')}
+}
+
+// Position updates (hero + webline) run every tick for buttery-smooth motion — they're
+// cheap (just a style.left/top write, CSS handles the rest). Heavy recomputation
+// (corners, web frame) is throttled inside its own functions above.
+function applyPosition(p){
+  const hero=document.getElementById('hero'),web=document.getElementById('webline');
+  const visualP=Math.min(p,100);
+  const vh=window.innerHeight;
+  const leftPos=(4+visualP*.88)+'%';
+  const topPos=(10+Math.sin(visualP/100*Math.PI)*18)+'%';
+  hero.style.left=leftPos;hero.style.top=topPos;web.style.left=leftPos;
+  web.style.setProperty('--wlh',(vh*(parseFloat(topPos)/100))+'px');
+  return {leftPos,topPos};
+}
+
+function frameTick(){
+  rafScheduled=false;
+  const p=pendingP;
+  const {leftPos,topPos}=applyPosition(p);
+  cornerLevel(p);
+  if(prodRect)drawWebFrame(p);
+
+  if(!themeEnabled)return;
+
+  if(p>0&&!isStarted){
+    isStarted=true;
+    document.getElementById('hero').className='hero drop';
+    document.getElementById('webline').classList.add('active');
+    play('a-drop');showCaption(1);
+    setTimeout(()=>{if(lastP>0)document.getElementById('hero').className=lastP>=100?'hero god':'hero swing'},900)
+  }else if(p>lastP&&p>0){
+    const hero=document.getElementById('hero');
+    if(p-lastP>8){
+      hero.className=p>=100?'hero god':'hero fastswing';
+      const t=document.getElementById('thwip');t.style.left=leftPos;t.style.top=topPos;t.classList.remove('go');void t.offsetWidth;t.classList.add('go');
+      play('a-thwip');
+    }else{hero.className=p>=100?'hero god':'hero swing';play('a-swing')}
+  }else if(p<lastP&&p>0){
+    const hero=document.getElementById('hero');
+    hero.className='hero brake';play('a-land');
+    setTimeout(()=>{if(lastP>0)hero.className=lastP>=100?'hero god':'hero swing'},700)
+  }else if(p===0){
+    const hero=document.getElementById('hero'),web=document.getElementById('webline'),gb=document.getElementById('godBanner');
+    hero.className='hero idle';web.classList.remove('active');isStarted=false;godOn=false;gb.classList.remove('on');cornerLevel(0)
+  }
+
+  [10,25,50,75,90,100].forEach(m=>{if(p>=m&&!milestonesPassed.has(m)){milestonesPassed.add(m);showCaption(m);play('a-milestone')}});
+  [10,25,50,75,90,100].forEach(m=>{if(p<m)milestonesPassed.delete(m)});
+
+  const gb=document.getElementById('godBanner');
+  if(p>=100&&!godOn){godOn=true;gb.classList.add('on');play('a-godmode');showCaption(100)}
+  else if(p<100&&godOn){godOn=false;gb.classList.remove('on')}
+
+  lastP=p;
+}
+
+window.addEventListener('message',function(e){
+  if(typeof e.data==='object'&&e.data.cmd){
+    if(e.data.cmd==='toggleTruck'){themeEnabled=e.data.value;document.getElementById('stage').classList.toggle('off',!themeEnabled)}
+    else if(e.data.cmd==='toggleSound'){soundEnabled=e.data.value}
+    else if(e.data.cmd==='setColorMode'){document.body.classList.toggle('light-web',e.data.value==='light')}
+    else if(e.data.cmd==='headerOffset'){
+      const introEl=document.getElementById('intro');
+      if(introEl&&typeof e.data.value==='number')introEl.style.paddingTop=Math.max(0,e.data.value)+'px';
+    }
+    else if(e.data.cmd==='prodRect'){
+      const nr=e.data.rect;
+      if(nr&&(!prodRect||Math.abs(nr.left-prodRect.left)>1||Math.abs(nr.top-prodRect.top)>1||Math.abs(nr.width-prodRect.width)>1)){
+        prodRect=nr;lastFrameBucket=-1; // force a redraw since the anchor moved/resized
+        if(lastP>=0)drawWebFrame(Math.max(0,lastP));
+      }
+    }
+    return}
+
+  let raw=parseInt(e.data);if(isNaN(raw))raw=0;
+  const p=Math.max(0,Math.min(raw,150));
+  if(p===lastP)return;
+
+  if(isFirstMessage){
+    isFirstMessage=false;
+    const hero=document.getElementById('hero'),web=document.getElementById('webline');
+    hero.classList.add('instant');web.classList.add('instant');
+    applyPosition(p);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{hero.classList.remove('instant');web.classList.remove('instant')}));
+    if(p>0){isStarted=true;hero.className='hero swing';web.classList.add('active')}
+    cornerLevel(p);
+    [10,25,50,75,90,100].forEach(m=>{if(p>=m)milestonesPassed.add(m)});
+    if(p>=100){godOn=true;document.getElementById('godBanner').classList.add('on')}
+    lastP=p;
+    if(themeEnabled)playIntro();
+    return}
+
+  pendingP=p;
+  if(!rafScheduled){rafScheduled=true;requestAnimationFrame(frameTick)}
+});
+
+window.addEventListener('resize',function(){lastFrameBucket=-1;if(prodRect&&lastP>=0)drawWebFrame(lastP)});
+</script>
+</body></html>
