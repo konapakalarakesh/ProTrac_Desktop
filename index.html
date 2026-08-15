@@ -452,7 +452,7 @@ function triggerToast() {
     const expiry = new Date('2026-08-17T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()} now you can get past week data back on UI once you dowloaded🎉`;
+        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()} now you can get past weeks data back on UI once you downloaded🎉`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
