@@ -449,10 +449,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-06-30T23:59:59').getTime();
+    const expiry = new Date('2026-08-17T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()} Delivery truck animation added! Check the 🚛 icon in header`;
+        document.getElementById('toast-msg').innerText = `Hey ${state.owner.toUpperCase()} now you can get past week data back on UI once you dowloaded🎉`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
@@ -827,6 +827,7 @@ setInterval(function(){
 },100);
 </script>
 <script src="spider-web.js"></script>
+<script src="weekly-history.js"></script>
 </body>
 </html>
 
