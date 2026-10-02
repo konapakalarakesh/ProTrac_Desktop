@@ -221,7 +221,7 @@ body.light-web .corner.lv4{opacity:1}
 <audio id="a-webspin" src="realweb-webspin.mp3" preload="none"></audio>
 
 <script>
-let lastP=-1,isFirstMessage=true,themeEnabled=true,soundEnabled=true,isStarted=false,godOn=false;
+let lastP=-1,isFirstMessage=true,themeEnabled=(localStorage.getItem('spiderWebOn')!=='0'),soundEnabled=true,isStarted=false,godOn=false;
 let prodRect=null,lastWebLevel=-1,lastFrameBucket=-1,lastCornerLevel=-1;
 let rafScheduled=false,pendingP=0;
 const milestonesPassed=new Set();
