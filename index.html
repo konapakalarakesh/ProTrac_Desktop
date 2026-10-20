@@ -346,7 +346,7 @@ const CONFIG = {
         "Supp-Prechecks": { "BAKS signal": 18, "Flavor": 18, "Size": 24, "Color": 24, "Item_Name": 30, "Brand": 24, "GCORID/ Stamping Issue": 18, "Product Type": 12 },
         "BAKS": { "Tasks": 658.8, "Multi-Pack": 600 },
         "PI checks": { "Positive": 600, "Negative": 120 },
-        "Non-BLMA Tool Decision": { "Insufficient Evidence": 420, "Safe to Suppress": 120, "DO not Suppress": 420 }
+        "Non-BLMA Tool Decision": { "Insufficient Evidence": 600, "Safe to Suppress": 120, "DO not Suppress": 600 }
     },
     verif: {
         "Brand Curation": { "V-BV": 46 },
@@ -450,10 +450,10 @@ function init() {
 }
 
 function triggerToast() {
-    const expiry = new Date('2026-09-30T23:59:59').getTime();
+    const expiry = new Date('2026-10-25T23:59:59').getTime();
     if (Date.now() < expiry) {
         const toast = document.getElementById('update-toast');
-        document.getElementById('toast-msg').innerHTML = `Hey ${state.owner.toUpperCase()} — game changer! Why be bored when you have this? 🎉 <a href="https://peccy-raid.harmony.a2z.com/" target="_blank" rel="noopener noreferrer">Click here</a>`;
+        document.getElementById('toast-msg').innerHTML = `WIP Validation AHT has been updated for Week 43.`; 
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 6000);
     }
